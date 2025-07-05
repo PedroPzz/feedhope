@@ -1,0 +1,432 @@
+@{
+    ViewData["Title"] = "Mapas e Logística - FeedHope";
+}
+
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); min-height: 100vh;">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 text-dark mb-1">
+                        <i class="fas fa-map-marked-alt text-primary me-2"></i>
+                        Mapas e Logística
+                    </h1>
+                    <p class="text-muted mb-0">Visualize localizações e otimize rotas de coleta</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="MapaLogistica.centerMap()">
+                        <i class="fas fa-crosshairs me-1"></i>
+                        Centralizar
+                    </button>
+                    <button class="btn btn-outline-success" onclick="MapaLogistica.optimizeRoute()">
+                        <i class="fas fa-route me-1"></i>
+                        Otimizar Rota
+                    </button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                        <i class="fas fa-filter me-1"></i>
+                        Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles e Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <label for="tipoVisualizacao" class="form-label">Visualização</label>
+                            <select class="form-select" id="tipoVisualizacao">
+                                <option value="alimentos">📍 Alimentos Disponíveis</option>
+                                <option value="empresas">🏢 Empresas Cadastradas</option>
+                                <option value="rotas">🚛 Rotas de Coleta</option>
+                                <option value="densidade">🔥 Mapa de Calor</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="raioColeta" class="form-label">Raio de Coleta</label>
+                            <select class="form-select" id="raioColeta">
+                                <option value="5">5 km</option>
+                                <option value="10" selected>10 km</option>
+                                <option value="20">20 km</option>
+                                <option value="50">50 km</option>
+                                <option value="100">100 km</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="prioridadeFiltro" class="form-label">Prioridade</label>
+                            <select class="form-select" id="prioridadeFiltro">
+                                <option value="">Todas</option>
+                                <option value="urgente">🔴 Urgente</option>
+                                <option value="alta">🟠 Alta</option>
+                                <option value="media">🟡 Média</option>
+                                <option value="baixa">🟢 Baixa</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-outline-info w-100" onclick="MapaLogistica.toggleTraffic()">
+                                <i class="fas fa-traffic-light me-1"></i>
+                                <span id="trafficToggleText">Mostrar Trânsito</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <div class="text-success mb-2">
+                                <i class="fas fa-map-pin fa-2x"></i>
+                            </div>
+                            <h4 class="mb-1" id="totalPontos">0</h4>
+                            <small class="text-muted">Pontos no Mapa</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <div class="text-warning mb-2">
+                                <i class="fas fa-route fa-2x"></i>
+                            </div>
+                            <h4 class="mb-1" id="distanciaTotal">0 km</h4>
+                            <small class="text-muted">Distância Total</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa Principal -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-globe-americas me-2"></i>
+                            Mapa Interativo
+                        </h5>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-secondary" onclick="MapaLogistica.changeMapType('roadmap')" title="Mapa">
+                                <i class="fas fa-map"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="MapaLogistica.changeMapType('satellite')" title="Satélite">
+                                <i class="fas fa-satellite"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="MapaLogistica.changeMapType('terrain')" title="Terreno">
+                                <i class="fas fa-mountain"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="mapa" style="height: 500px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Painel de Informações -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Pontos de Coleta
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="pontosTable">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Local</th>
+                                    <th>Alimento</th>
+                                    <th>Quantidade</th>
+                                    <th>Prioridade</th>
+                                    <th>Distância</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pontosTableBody">
+                                <!-- Dados serão carregados aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-route me-2"></i>
+                        Rota Otimizada
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="rotaInfo">
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-route fa-2x mb-2"></i>
+                            <p>Clique em "Otimizar Rota" para calcular a melhor rota de coleta</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Filtros -->
+<div class="modal fade" id="modalFiltros" tabindex="-1" aria-labelledby="modalFiltrosLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalFiltrosLabel">
+                    <i class="fas fa-filter me-2"></i>
+                    Filtros Avançados
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                
+                <!-- Filtros por Categoria -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">Categorias de Alimentos</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroFrutas" checked>
+                                <label class="form-check-label" for="filtroFrutas">
+                                    🍎 Frutas
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroVerduras" checked>
+                                <label class="form-check-label" for="filtroVerduras">
+                                    🥕 Verduras
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroPaes" checked>
+                                <label class="form-check-label" for="filtroPaes">
+                                    🍞 Pães
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroLaticinios" checked>
+                                <label class="form-check-label" for="filtroLaticinios">
+                                    🧀 Laticínios
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroCarnes" checked>
+                                <label class="form-check-label" for="filtroCarnes">
+                                    🥩 Carnes
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroOutros" checked>
+                                <label class="form-check-label" for="filtroOutros">
+                                    📦 Outros
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros por Data -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">Período de Disponibilidade</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="dataInicio" class="form-label">Data Início</label>
+                            <input type="date" class="form-control" id="dataInicio">
+                        </div>
+                        <div class="col-6">
+                            <label for="dataFim" class="form-label">Data Fim</label>
+                            <input type="date" class="form-control" id="dataFim">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros por Quantidade -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">Quantidade Mínima</h6>
+                    <div class="row">
+                        <div class="col-8">
+                            <input type="range" class="form-range" id="quantidadeMinima" min="0" max="1000" value="0">
+                        </div>
+                        <div class="col-4">
+                            <input type="number" class="form-control" id="quantidadeMinimaValue" value="0" readonly>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="MapaLogistica.resetFilters()">
+                    Limpar Filtros
+                </button>
+                <button type="button" class="btn btn-primary" onclick="MapaLogistica.applyFilters()" data-bs-dismiss="modal">
+                    Aplicar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes do Ponto -->
+<div class="modal fade" id="modalDetalhesPonto" tabindex="-1" aria-labelledby="modalDetalhesPontoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalDetalhesPontoLabel">
+                    <i class="fas fa-map-pin me-2"></i>
+                    Detalhes do Ponto de Coleta
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalDetalhesPontoContent">
+                <!-- Conteúdo será carregado dinamicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="btnNavegar">
+                    <i class="fas fa-directions me-2"></i>
+                    Navegar até Local
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/auth.js"></script>
+    <script src="~/js/mapa-logistica.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticação
+            if (!Auth.isLoggedIn()) {
+                window.location.href = '@Url.Action("Login", "Home")';
+                return;
+            }
+            
+            // Inicializar mapa
+            MapaLogistica.init();
+        });
+    </script>
+    
+    <!-- Google Maps API (simulada) -->
+    <script>
+        // Simulação da API do Google Maps para demonstração
+        window.google = {
+            maps: {
+                Map: function(element, options) {
+                    this.element = element;
+                    this.options = options;
+                    this.markers = [];
+                    this.directionsRenderer = null;
+                    
+                    // Simular mapa
+                    element.innerHTML = `
+                        <div style="width: 100%; height: 100%; background: linear-gradient(45deg, #e8f5e8 25%, transparent 25%), 
+                                    linear-gradient(-45deg, #e8f5e8 25%, transparent 25%), 
+                                    linear-gradient(45deg, transparent 75%, #e8f5e8 75%), 
+                                    linear-gradient(-45deg, transparent 75%, #e8f5e8 75%);
+                             background-size: 20px 20px;
+                             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+                             display: flex;
+                             align-items: center;
+                             justify-content: center;
+                             color: #666;
+                             font-size: 18px;
+                             position: relative;">
+                            <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
+                                <i class="fas fa-map fa-3x text-success mb-3"></i><br>
+                                <strong>Mapa Interativo</strong><br>
+                                <small class="text-muted">Visualização simulada para demonstração</small>
+                                <div id="mapMarkers" style="margin-top: 15px;"></div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return this;
+                },
+                Marker: function(options) {
+                    this.options = options;
+                    this.map = options.map;
+                    if (this.map) {
+                        this.map.markers.push(this);
+                        this.updateMapDisplay();
+                    }
+                    return this;
+                },
+                InfoWindow: function(options) {
+                    this.options = options;
+                    return this;
+                },
+                DirectionsService: function() {
+                    return {
+                        route: function(request, callback) {
+                            // Simular resposta de rota
+                            setTimeout(() => {
+                                callback({
+                                    routes: [{
+                                        legs: [{
+                                            distance: { text: '5.2 km' },
+                                            duration: { text: '12 min' }
+                                        }]
+                                    }]
+                                }, 'OK');
+                            }, 1000);
+                        }
+                    };
+                },
+                DirectionsRenderer: function() {
+                    return {
+                        setMap: function(map) {
+                            map.directionsRenderer = this;
+                        },
+                        setDirections: function(result) {
+                            // Simular exibição de rota
+                        }
+                    };
+                },
+                LatLng: function(lat, lng) {
+                    return { lat: lat, lng: lng };
+                },
+                MapTypeId: {
+                    ROADMAP: 'roadmap',
+                    SATELLITE: 'satellite',
+                    TERRAIN: 'terrain'
+                }
+            }
+        };
+        
+        // Adicionar método para atualizar display do mapa
+        google.maps.Marker.prototype.updateMapDisplay = function() {
+            const markersContainer = this.map.element.querySelector('#mapMarkers');
+            if (markersContainer) {
+                const markerDiv = document.createElement('div');
+                markerDiv.style.cssText = 'display: inline-block; margin: 2px; padding: 4px 8px; background: #007bff; color: white; border-radius: 12px; font-size: 12px;';
+                markerDiv.textContent = this.options.title || 'Ponto';
+                markersContainer.appendChild(markerDiv);
+            }
+        };
+    </script>
+}
+

@@ -1,0 +1,72 @@
+﻿@model FeedHope.Models.AlimentoModel
+
+@{
+    ViewData["Title"] = "Novo Alimento";
+}
+
+<h2>Cadastrar Alimento</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<form asp-action="Create" method="post" id="alimentoForm">
+    <div class="mb-3">
+        <label asp-for="Tipo" class="form-label"></label>
+        <input asp-for="Tipo" class="form-control" />
+        <span asp-validation-for="Tipo" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Descricao" class="form-label"></label>
+        <textarea asp-for="Descricao" class="form-control"></textarea>
+        <span asp-validation-for="Descricao" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Quantidade" class="form-label"></label>
+        <input asp-for="Quantidade" class="form-control" />
+        <span asp-validation-for="Quantidade" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="UnidadeMedida" class="form-label"></label>
+        <select asp-for="UnidadeMedida" class="form-control">
+            <option value="">Selecione...</option>
+            <option value="kg">Quilogramas (kg)</option>
+            <option value="g">Gramas (g)</option>
+            <option value="l">Litros (l)</option>
+            <option value="ml">Mililitros (ml)</option>
+            <option value="unidades">Unidades</option>
+            <option value="caixas">Caixas</option>
+            <option value="pacotes">Pacotes</option>
+        </select>
+        <span asp-validation-for="UnidadeMedida" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Validade" class="form-label"></label>
+        <input asp-for="Validade" type="date" class="form-control" />
+        <span asp-validation-for="Validade" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="EmpresaId" class="form-label">Empresa</label>
+        <select asp-for="EmpresaId" asp-items="ViewBag.Empresas" class="form-control">
+            <option value="">Selecione uma empresa...</option>
+        </select>
+        <span asp-validation-for="EmpresaId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Observacoes" class="form-label"></label>
+        <textarea asp-for="Observacoes" class="form-control"></textarea>
+        <span asp-validation-for="Observacoes" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

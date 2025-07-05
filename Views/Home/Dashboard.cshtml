@@ -1,0 +1,315 @@
+@{
+    ViewData["Title"] = "Dashboard - FeedHope";
+}
+
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); min-height: 100vh;">
+    
+    <!-- Header do Dashboard -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 text-dark mb-1">
+                        <i class="fas fa-tachometer-alt text-success me-2"></i>
+                        Dashboard
+                    </h1>
+                    <p class="text-muted mb-0" id="welcomeMessage">Bem-vindo ao FeedHope</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-success" onclick="window.location.reload()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-success" onclick="window.location.href='@Url.Action("CadastroAlimento", "Home")'">
+                        <i class="fas fa-plus me-1"></i>
+                        Novo Alimento
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span id="userNameDisplay">Usuário</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="editProfile()">
+                                <i class="fas fa-edit me-2"></i>Editar Perfil
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="viewSettings()">
+                                <i class="fas fa-cog me-2"></i>Configurações
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" data-action="logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Sair
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-apple-alt text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Alimentos Cadastrados</h6>
+                            <h3 class="mb-0" id="totalAlimentos">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-clock text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Pendentes de Coleta</h6>
+                            <h3 class="mb-0" id="alimentosPendentes">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-truck text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Coletas Realizadas</h6>
+                            <h3 class="mb-0" id="coletasRealizadas">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-exclamation-triangle text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Urgentes</h6>
+                            <h3 class="mb-0" id="alimentosUrgentes">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos e Análises -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line text-success me-2"></i>
+                        Alimentos Cadastrados por Mês
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartAlimentosMes" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie text-warning me-2"></i>
+                        Tipos de Alimentos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartTiposAlimentos" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificações e Alertas -->
+    <div class="row mb-4" id="notificationsSection">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bell text-info me-2"></i>
+                            Notificações e Alertas
+                        </h5>
+                        <button class="btn btn-sm btn-outline-info" onclick="markAllAsRead()">
+                            <i class="fas fa-check-double me-1"></i>
+                            Marcar todas como lidas
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" id="notificationsList">
+                    <!-- Notificações serão carregadas aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Alimentos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list text-success me-2"></i>
+                            Meus Alimentos Cadastrados
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success btn-sm" onclick="Dashboard.exportToExcel()" title="Exportar para Excel">
+                                <i class="fas fa-file-excel me-1"></i>
+                                Excel
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="Dashboard.exportToPDF()" title="Exportar para PDF">
+                                <i class="fas fa-file-pdf me-1"></i>
+                                PDF
+                            </button>
+                            <select class="form-select form-select-sm" id="filterStatus" style="width: auto;">
+                                <option value="">Todos os Status</option>
+                                <option value="disponivel">Disponível</option>
+                                <option value="coletado">Coletado</option>
+                                <option value="expirado">Expirado</option>
+                            </select>
+                            <select class="form-select form-select-sm" id="filterCategoria" style="width: auto;">
+                                <option value="">Todas as Categorias</option>
+                                <option value="frutas">Frutas</option>
+                                <option value="verduras">Verduras e Legumes</option>
+                                <option value="paes">Pães e Padaria</option>
+                                <option value="laticinios">Laticínios</option>
+                                <option value="carnes">Carnes</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="alimentosTable">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Alimento</th>
+                                    <th>Categoria</th>
+                                    <th>Quantidade</th>
+                                    <th>Status</th>
+                                    <th>Prioridade</th>
+                                    <th>Data Cadastro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alimentosTableBody">
+                                <!-- Dados serão carregados aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes do Alimento -->
+<div class="modal fade" id="modalDetalhesAlimento" tabindex="-1" aria-labelledby="modalDetalhesAlimentoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalDetalhesAlimentoLabel">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Detalhes do Alimento
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalDetalhesContent">
+                <!-- Conteúdo será carregado dinamicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-warning" id="btnEditarAlimento">
+                    <i class="fas fa-edit me-2"></i>
+                    Editar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="modalConfirmarExclusaoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalConfirmarExclusaoLabel">
+                    <i class="fas fa-trash me-2"></i>
+                    Confirmar Exclusão
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir este alimento?</p>
+                <p class="text-muted mb-0">Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarExclusao">
+                    <i class="fas fa-trash me-2"></i>
+                    Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="~/js/auth.js"></script>
+    <script src="~/js/dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticação
+            if (!Auth.isLoggedIn()) {
+                window.location.href = '@Url.Action("Login", "Home")';
+                return;
+            }
+            
+            // Inicializar dashboard
+            Dashboard.init();
+        });
+    </script>
+}
+

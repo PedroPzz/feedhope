@@ -1,0 +1,232 @@
+@{
+    ViewData["Title"] = "Dashboard Geral - Relatórios";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard Geral</h2>
+        <p class="text-muted">Visão geral das atividades e impacto do FeedHope</p>
+    </div>
+</div>
+
+<!-- Cards de estatísticas principais -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@ViewBag.TotalEmpresas</div>
+            <div class="stat-label">Empresas Cadastradas</div>
+            <small class="text-success">@ViewBag.EmpresasAtivas ativas</small>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@ViewBag.TotalAlimentos</div>
+            <div class="stat-label">Alimentos Cadastrados</div>
+            <small class="text-success">@ViewBag.AlimentosDisponiveis disponíveis</small>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@ViewBag.TotalColetas</div>
+            <div class="stat-label">Total de Coletas</div>
+            <small class="text-success">@ViewBag.ColetasConcluidas concluídas</small>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@ViewBag.TotalDestinacoes</div>
+            <div class="stat-label">Destinações</div>
+            <small class="text-success">@ViewBag.DestinacoesConcluidas concluídas</small>
+        </div>
+    </div>
+</div>
+
+<!-- Cards de impacto -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="impact-card">
+            <div class="impact-icon">
+                <i class="fas fa-weight-hanging"></i>
+            </div>
+            <h4>@(ViewBag.QuantidadeTotalColetada.ToString("N1")) kg</h4>
+            <p class="text-muted">Alimentos Coletados</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="impact-card">
+            <div class="impact-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h4>@ViewBag.TotalBeneficiarios</h4>
+            <p class="text-muted">Beneficiários Atendidos</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="impact-card">
+            <div class="impact-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h4>@((ViewBag.QuantidadeTotalColetada * 2.5).ToString("N1")) kg</h4>
+            <p class="text-muted">CO₂ Evitado</p>
+        </div>
+    </div>
+</div>
+
+<!-- Navegação rápida para relatórios específicos -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h4><i class="fas fa-chart-line me-2"></i>Relatórios Detalhados</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-leaf fa-3x text-success"></i>
+                </div>
+                <h5 class="card-title">Impacto Ambiental</h5>
+                <p class="card-text">Visualize o impacto ambiental das ações de reaproveitamento</p>
+                <a asp-action="ImpactoAmbiental" class="btn btn-success">Ver Relatório</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-weight fa-3x text-info"></i>
+                </div>
+                <h5 class="card-title">Quantidade Coletada</h5>
+                <p class="card-text">Acompanhe as quantidades coletadas por período</p>
+                <a asp-action="QuantidadeColetada" class="btn btn-info">Ver Relatório</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-recycle fa-3x text-warning"></i>
+                </div>
+                <h5 class="card-title">Formas de Uso</h5>
+                <p class="card-text">Analise como os alimentos são destinados e utilizados</p>
+                <a asp-action="FormasUso" class="btn btn-warning">Ver Relatório</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-building fa-3x text-secondary"></i>
+                </div>
+                <h5 class="card-title">Relatório de Empresas</h5>
+                <p class="card-text">Ranking e estatísticas das empresas parceiras</p>
+                <a asp-action="Empresas" class="btn btn-secondary">Ver Relatório</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-calendar fa-3x text-danger"></i>
+                </div>
+                <h5 class="card-title">Relatório Mensal</h5>
+                <p class="card-text">Resumo detalhado das atividades mensais</p>
+                <a asp-action="Mensal" class="btn btn-danger">Ver Relatório</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-download fa-3x text-primary"></i>
+                </div>
+                <h5 class="card-title">Exportar Dados</h5>
+                <p class="card-text">Baixe relatórios em formato JSON para análise</p>
+                <div class="btn-group-vertical w-100">
+                    <a href="@Url.Action("ExportarDados", new { tipo = "coletas" })" class="btn btn-outline-primary btn-sm">Coletas</a>
+                    <a href="@Url.Action("ExportarDados", new { tipo = "destinacoes" })" class="btn btn-outline-primary btn-sm">Destinações</a>
+                    <a href="@Url.Action("ExportarDados", new { tipo = "empresas" })" class="btn btn-outline-primary btn-sm">Empresas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico simples de progresso -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar me-2"></i>Progresso Geral</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Taxa de Conclusão de Coletas</h6>
+                        <div class="progress mb-3">
+                            @{
+                                var taxaColetas = ViewBag.TotalColetas > 0 ? (double)ViewBag.ColetasConcluidas / ViewBag.TotalColetas * 100 : 0;
+                            }
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @(taxaColetas)%" 
+                                 aria-valuenow="@taxaColetas" aria-valuemin="0" aria-valuemax="100">
+                                @(taxaColetas.ToString("F1"))%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Taxa de Conclusão de Destinações</h6>
+                        <div class="progress mb-3">
+                            @{
+                                var taxaDestinacoes = ViewBag.TotalDestinacoes > 0 ? (double)ViewBag.DestinacoesConcluidas / ViewBag.TotalDestinacoes * 100 : 0;
+                            }
+                            <div class="progress-bar bg-info" role="progressbar" style="width: @(taxaDestinacoes)%" 
+                                 aria-valuenow="@taxaDestinacoes" aria-valuemin="0" aria-valuemax="100">
+                                @(taxaDestinacoes.ToString("F1"))%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Empresas Ativas</h6>
+                        <div class="progress mb-3">
+                            @{
+                                var taxaEmpresasAtivas = ViewBag.TotalEmpresas > 0 ? (double)ViewBag.EmpresasAtivas / ViewBag.TotalEmpresas * 100 : 0;
+                            }
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: @(taxaEmpresasAtivas)%" 
+                                 aria-valuenow="@taxaEmpresasAtivas" aria-valuemin="0" aria-valuemax="100">
+                                @(taxaEmpresasAtivas.ToString("F1"))%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Alimentos Disponíveis</h6>
+                        <div class="progress mb-3">
+                            @{
+                                var taxaAlimentosDisponiveis = ViewBag.TotalAlimentos > 0 ? (double)ViewBag.AlimentosDisponiveis / ViewBag.TotalAlimentos * 100 : 0;
+                            }
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: @(taxaAlimentosDisponiveis)%" 
+                                 aria-valuenow="@taxaAlimentosDisponiveis" aria-valuemin="0" aria-valuemax="100">
+                                @(taxaAlimentosDisponiveis.ToString("F1"))%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

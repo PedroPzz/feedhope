@@ -1,0 +1,351 @@
+@{
+    ViewData["Title"] = "Dashboard de Destinações";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-chart-pie me-2 text-info"></i>Dashboard de Destinações</h2>
+        <p class="text-muted">Visão geral das destinações e impacto social dos alimentos coletados</p>
+    </div>
+</div>
+
+<!-- Estatísticas principais -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number text-primary">@ViewBag.TotalDestinacoes</div>
+            <div class="stat-label">Total de Destinações</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number text-success">@ViewBag.DestinacoesConcluidas</div>
+            <div class="stat-label">Destinações Concluídas</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number text-warning">@ViewBag.DestinacoesEmAndamento</div>
+            <div class="stat-label">Em Andamento</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number text-info">@ViewBag.TotalBeneficiarios</div>
+            <div class="stat-label">Beneficiários Atendidos</div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos e análises -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-doughnut me-2"></i>Distribuição por Tipo de Destinação</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="graficoTiposDestinacao" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-percentage me-2"></i>Taxa de Conclusão</h5>
+            </div>
+            <div class="card-body text-center">
+                @{
+                    var taxaConclusao = ViewBag.TotalDestinacoes > 0 ? (double)ViewBag.DestinacoesConcluidas / ViewBag.TotalDestinacoes * 100 : 0;
+                }
+                <div class="mb-3">
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @(taxaConclusao)%" 
+                             aria-valuenow="@taxaConclusao" aria-valuemin="0" aria-valuemax="100">
+                            @taxaConclusao.ToString("F1")%
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-success">@taxaConclusao.ToString("F1")%</h3>
+                <p class="text-muted">das destinações foram concluídas</p>
+                
+                @if (taxaConclusao >= 90)
+                {
+                    <div class="alert alert-success">
+                        <i class="fas fa-trophy me-2"></i>Excelente performance!
+                    </div>
+                }
+                else if (taxaConclusao >= 70)
+                {
+                    <div class="alert alert-warning">
+                        <i class="fas fa-thumbs-up me-2"></i>Boa performance!
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="fas fa-chart-line me-2"></i>Há espaço para melhoria
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detalhamento por tipo de destinação -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-table me-2"></i>Detalhamento por Tipo de Destinação</h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.EstatisticasPorTipo != null && ((IEnumerable<dynamic>)ViewBag.EstatisticasPorTipo).Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tipo de Destinação</th>
+                                    <th>Quantidade Total (kg)</th>
+                                    <th>Participação (%)</th>
+                                    <th>Impacto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var totalQuantidade = ((IEnumerable<dynamic>)ViewBag.EstatisticasPorTipo).Sum(e => e.Quantidade);
+                                }
+                                @foreach (var estatistica in ViewBag.EstatisticasPorTipo)
+                                {
+                                    var percentual = totalQuantidade > 0 ? (double)estatistica.Quantidade / totalQuantidade * 100 : 0;
+                                    <tr>
+                                        <td>
+                                            <strong>@estatistica.Tipo</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">@estatistica.Quantidade.ToString("N1") kg</span>
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" role="progressbar" style="width: @(percentual)%">
+                                                    @percentual.ToString("F1")%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @switch (estatistica.Tipo.ToString())
+                                            {
+                                                case "Alimentação Humana":
+                                                    <span class="badge bg-primary">
+                                                        <i class="fas fa-users me-1"></i>Social
+                                                    </span>
+                                                    break;
+                                                case "Alimentação Animal":
+                                                    <span class="badge bg-info">
+                                                        <i class="fas fa-paw me-1"></i>Animal
+                                                    </span>
+                                                    break;
+                                                case "Compostagem":
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-leaf me-1"></i>Ambiental
+                                                    </span>
+                                                    break;
+                                                case "Pesquisa/Educação":
+                                                    <span class="badge bg-warning">
+                                                        <i class="fas fa-graduation-cap me-1"></i>Educacional
+                                                    </span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">
+                                                        <i class="fas fa-question me-1"></i>Outro
+                                                    </span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Ainda não há destinações concluídas para exibir estatísticas.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Impacto social -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-heart me-2"></i>Impacto Social</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h3 class="text-primary">@ViewBag.TotalBeneficiarios</h3>
+                        <p class="text-muted">Pessoas Beneficiadas</p>
+                    </div>
+                    <div class="col-6">
+                        @{
+                            var totalQuantidadeDestinacao = ViewBag.EstatisticasPorTipo != null ? 
+                                ((IEnumerable<dynamic>)ViewBag.EstatisticasPorTipo).Sum(e => e.Quantidade) : 0;
+                        }
+                        <h3 class="text-success">@totalQuantidadeDestinacao.ToString("N1")</h3>
+                        <p class="text-muted">kg Destinados</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <h6>Estimativa de Impacto:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-utensils text-primary me-2"></i>
+                            Aproximadamente @((ViewBag.TotalBeneficiarios * 3).ToString("N0")) refeições fornecidas
+                        </li>
+                        <li><i class="fas fa-leaf text-success me-2"></i>
+                            @((totalQuantidadeDestinacao * 2.5).ToString("N1")) kg de CO₂ evitados
+                        </li>
+                        <li><i class="fas fa-tint text-info me-2"></i>
+                            @((totalQuantidadeDestinacao * 1000).ToString("N0")) litros de água economizados
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-tasks me-2"></i>Ações Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-list me-2"></i>Ver Todas as Destinações
+                    </a>
+                    <a asp-action="Create" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Nova Destinação
+                    </a>
+                    <a asp-controller="Coleta" asp-action="Index" class="btn btn-info">
+                        <i class="fas fa-truck me-2"></i>Ver Coletas Disponíveis
+                    </a>
+                    <a asp-controller="Relatorio" asp-action="FormasUso" class="btn btn-warning">
+                        <i class="fas fa-chart-bar me-2"></i>Relatório Detalhado
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Metas e objetivos -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-target me-2"></i>Metas e Objetivos</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6>Meta Mensal de Beneficiários</h6>
+                        @{
+                            var metaBeneficiarios = 1000;
+                            var progressoBeneficiarios = ViewBag.TotalBeneficiarios > 0 ? 
+                                Math.Min((double)ViewBag.TotalBeneficiarios / metaBeneficiarios * 100, 100) : 0;
+                        }
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: @(progressoBeneficiarios)%">
+                                @progressoBeneficiarios.ToString("F1")%
+                            </div>
+                        </div>
+                        <small class="text-muted">@ViewBag.TotalBeneficiarios de @metaBeneficiarios</small>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <h6>Meta de Destinações Concluídas</h6>
+                        @{
+                            var metaDestinacoes = 50;
+                            var progressoDestinacoes = ViewBag.DestinacoesConcluidas > 0 ? 
+                                Math.Min((double)ViewBag.DestinacoesConcluidas / metaDestinacoes * 100, 100) : 0;
+                        }
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @(progressoDestinacoes)%">
+                                @progressoDestinacoes.ToString("F1")%
+                            </div>
+                        </div>
+                        <small class="text-muted">@ViewBag.DestinacoesConcluidas de @metaDestinacoes</small>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <h6>Taxa de Conclusão Alvo</h6>
+                        @{
+                            var metaTaxa = 85.0;
+                            var progressoTaxa = Math.Min(taxaConclusao / metaTaxa * 100, 100);
+                        }
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: @(progressoTaxa)%">
+                                @progressoTaxa.ToString("F1")%
+                            </div>
+                        </div>
+                        <small class="text-muted">@taxaConclusao.ToString("F1")% de @metaTaxa%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Gráfico de tipos de destinação
+    const ctx = document.getElementById('graficoTiposDestinacao').getContext('2d');
+    const estatisticas = @Html.Raw(Json.Serialize(ViewBag.EstatisticasPorTipo ?? new object[0]));
+    
+    if (estatisticas.length > 0) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: estatisticas.map(e => e.tipo),
+                datasets: [{
+                    data: estatisticas.map(e => e.quantidade),
+                    backgroundColor: [
+                        '#38a169', '#4299e1', '#ed8936', '#e53e3e', '#805ad5',
+                        '#38b2ac', '#d69e2e', '#f56565', '#9f7aea', '#4fd1c7'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed.toFixed(1) + ' kg';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        document.getElementById('graficoTiposDestinacao').innerHTML = 
+            '<div class="text-center text-muted p-4">Nenhum dado disponível para exibir</div>';
+    }
+</script>
+}
+

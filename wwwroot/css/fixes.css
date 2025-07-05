@@ -1,0 +1,625 @@
+/* Correções para problemas visuais dos formulários */
+
+/* Corrigir labels coloridos nos formulários */
+.form-label {
+    background: transparent !important;
+    color: var(--dark-color) !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    position: relative !important;
+    z-index: auto !important;
+}
+
+/* Remover qualquer estilo de background ou border nos labels */
+label.form-label {
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Garantir que os campos de entrada tenham o estilo correto */
+.form-control, .form-select {
+    border-radius: var(--border-radius) !important;
+    border: 2px solid #e2e8f0 !important;
+    padding: 0.875rem 1rem !important;
+    transition: var(--transition) !important;
+    background: white !important;
+    font-size: 1rem !important;
+    margin-top: 0.25rem !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-green) !important;
+    box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1) !important;
+    outline: none !important;
+}
+
+/* Espaçamento correto entre campos */
+.mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+/* Garantir que os botões tenham o estilo correto */
+.btn-success {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, var(--dark-green) 0%, var(--forest-green) 100%) !important;
+    transform: translateY(-2px) !important;
+}
+
+.btn-secondary {
+    background: #6c757d !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-secondary:hover {
+    background: #5a6268 !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Correções específicas para elementos com problemas de cor */
+label[for="Nome"],
+label[for="CNPJ"],
+label[for="Tipo"],
+label[for="Endereco"],
+label[for="CEP"],
+label[for="Cidade"],
+label[for="Estado"],
+label[for="Contato"],
+label[for="Email"],
+label[for="Responsavel"],
+label[for="Status"],
+label[for="Observacoes"] {
+    background: transparent !important;
+    color: var(--dark-color) !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* Garantir que textarea tenha o mesmo estilo */
+textarea.form-control {
+    min-height: 100px !important;
+    resize: vertical !important;
+}
+
+/* Melhorar o layout dos formulários */
+.container-fluid {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+}
+
+/* Estilo para títulos de páginas */
+h2 {
+    color: var(--dark-color) !important;
+    font-weight: 700 !important;
+    margin-bottom: 2rem !important;
+    border-bottom: 3px solid var(--primary-green) !important;
+    padding-bottom: 0.5rem !important;
+}
+
+/* Melhorar o espaçamento geral */
+main {
+    padding: 2rem 0 !important;
+}
+
+/* Correções para tabelas */
+.table {
+    margin-top: 2rem !important;
+}
+
+.table th {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 1.25rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-size: 0.875rem !important;
+}
+
+.table td {
+    padding: 1.25rem !important;
+    vertical-align: middle !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* Botões de ação nas tabelas */
+.btn-sm {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    margin-right: 0.25rem !important;
+}
+
+.btn-warning {
+    background: var(--gradient-earth) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, var(--sky-blue) 0%, #3182ce 100%) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #c53030 100%) !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* ===== CORREÇÕES DE Z-INDEX PARA DROPDOWNS ===== */
+/* Garantir que a navbar tenha z-index alto */
+.navbar {
+    z-index: 1030 !important;
+    position: relative !important;
+}
+
+/* Garantir que os dropdowns fiquem acima de todos os elementos */
+.dropdown-menu {
+    z-index: 1050 !important;
+    position: absolute !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+    border: none !important;
+    border-radius: var(--border-radius) !important;
+    padding: 0.5rem 0 !important;
+    margin-top: 0.25rem !important;
+    background: white !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+/* Estilo melhorado para itens do dropdown */
+.dropdown-item {
+    padding: 0.75rem 1.25rem !important;
+    transition: var(--transition) !important;
+    border: none !important;
+    background: transparent !important;
+    color: var(--dark-color) !important;
+    font-weight: 500 !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%) !important;
+    color: white !important;
+    transform: translateX(5px) !important;
+}
+
+.dropdown-item i {
+    width: 20px !important;
+    text-align: center !important;
+}
+
+/* Divider melhorado */
+.dropdown-divider {
+    margin: 0.5rem 0 !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* Garantir que elementos com position fixed/absolute não sobreponham dropdowns */
+.hero-section,
+.features-section,
+main,
+.container,
+.container-fluid,
+.card,
+.table-responsive,
+.alert {
+    z-index: auto !important;
+}
+
+/* Correção específica para elementos que podem sobrepor */
+.card {
+    z-index: 1 !important;
+    position: relative !important;
+}
+
+.table-responsive {
+    z-index: 1 !important;
+    position: relative !important;
+}
+
+/* Garantir que modais fiquem acima dos dropdowns quando necessário */
+.modal {
+    z-index: 1055 !important;
+}
+
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+/* Correção para tooltips */
+.tooltip {
+    z-index: 1070 !important;
+}
+
+/* Correção para popovers */
+.popover {
+    z-index: 1060 !important;
+}
+
+/* ===== MELHORIAS DE RESPONSIVIDADE PARA DROPDOWNS ===== */
+@media (max-width: 991.98px) {
+    /* Em telas menores, os dropdowns do navbar colapsado devem funcionar corretamente */
+    .navbar-collapse .dropdown-menu {
+        position: static !important;
+        float: none !important;
+        width: auto !important;
+        margin-top: 0 !important;
+        background-color: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        z-index: auto !important;
+    }
+    
+    .navbar-collapse .dropdown-item {
+        padding: 0.5rem 1rem !important;
+        color: rgba(255, 255, 255, 0.75) !important;
+    }
+    
+    .navbar-collapse .dropdown-item:hover,
+    .navbar-collapse .dropdown-item:focus {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        transform: none !important;
+    }
+}
+
+/* Responsividade para formulários */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0 1rem !important;
+    }
+    
+    .btn {
+        width: 100% !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .btn-group .btn {
+        width: auto !important;
+    }
+}
+
+
+/* ===== MELHORIAS DE INTERAÇÕES E BOTÕES ===== */
+
+/* Botões principais melhorados */
+.btn {
+    border-radius: var(--border-radius) !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-size: 0.875rem !important;
+}
+
+.btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+    transition: left 0.5s !important;
+}
+
+.btn:hover::before {
+    left: 100% !important;
+}
+
+.btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.btn:active {
+    transform: translateY(0) !important;
+    transition: transform 0.1s !important;
+}
+
+/* Botão primário */
+.btn-primary {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3) !important;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--dark-green) 0%, var(--forest-green) 100%) !important;
+    box-shadow: 0 8px 25px rgba(56, 161, 105, 0.4) !important;
+    color: white !important;
+}
+
+/* Botão outline primário */
+.btn-outline-primary {
+    border: 2px solid var(--primary-green) !important;
+    color: var(--primary-green) !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border-color: var(--primary-green) !important;
+}
+
+/* Botão sucesso */
+.btn-success {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3) !important;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, var(--dark-green) 0%, var(--forest-green) 100%) !important;
+    box-shadow: 0 8px 25px rgba(56, 161, 105, 0.4) !important;
+    color: white !important;
+}
+
+/* Botão warning */
+.btn-warning {
+    background: var(--gradient-earth) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(237, 137, 54, 0.3) !important;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #c05621 0%, #dd6b20 100%) !important;
+    box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4) !important;
+    color: white !important;
+}
+
+/* Botão info */
+.btn-info {
+    background: linear-gradient(135deg, var(--sky-blue) 0%, #3182ce 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3) !important;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%) !important;
+    box-shadow: 0 8px 25px rgba(66, 153, 225, 0.4) !important;
+    color: white !important;
+}
+
+/* Botão danger */
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #c53030 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3) !important;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%) !important;
+    box-shadow: 0 8px 25px rgba(229, 62, 62, 0.4) !important;
+    color: white !important;
+}
+
+/* Botão secondary */
+.btn-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3) !important;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #495057 100%) !important;
+    box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4) !important;
+    color: white !important;
+}
+
+/* Botões pequenos */
+.btn-sm {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+    border-radius: 8px !important;
+}
+
+/* Botões grandes */
+.btn-lg {
+    padding: 1rem 2rem !important;
+    font-size: 1rem !important;
+    border-radius: 16px !important;
+}
+
+/* ===== MELHORIAS PARA LINKS E NAVEGAÇÃO ===== */
+
+/* Links da navbar */
+.nav-link {
+    transition: var(--transition) !important;
+    border-radius: 8px !important;
+    margin: 0 0.25rem !important;
+    position: relative !important;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    font-weight: 600 !important;
+}
+
+/* Melhorias para o brand */
+.navbar-brand {
+    transition: var(--transition) !important;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05) !important;
+}
+
+/* ===== MELHORIAS PARA CARDS ===== */
+.card {
+    border: none !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--box-shadow) !important;
+    transition: var(--transition) !important;
+    overflow: hidden !important;
+}
+
+.card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-header {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 1.25rem !important;
+}
+
+.card-body {
+    padding: 1.5rem !important;
+}
+
+/* ===== MELHORIAS PARA FORMULÁRIOS ===== */
+.form-control,
+.form-select {
+    transition: var(--transition) !important;
+    border-radius: var(--border-radius) !important;
+    border: 2px solid #e2e8f0 !important;
+    padding: 0.875rem 1rem !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-green) !important;
+    box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* ===== MELHORIAS PARA TABELAS ===== */
+.table {
+    border-radius: var(--border-radius) !important;
+    overflow: hidden !important;
+    box-shadow: var(--box-shadow) !important;
+}
+
+.table thead th {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-size: 0.875rem !important;
+}
+
+.table tbody tr {
+    transition: var(--transition) !important;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(56, 161, 105, 0.05) !important;
+    transform: scale(1.01) !important;
+}
+
+/* ===== MELHORIAS PARA ALERTAS ===== */
+.alert {
+    border: none !important;
+    border-radius: var(--border-radius) !important;
+    padding: 1.25rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: var(--box-shadow) !important;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(56, 161, 105, 0.1) 0%, rgba(104, 211, 145, 0.1) 100%) !important;
+    color: var(--dark-green) !important;
+    border-left: 4px solid var(--primary-green) !important;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(229, 62, 62, 0.1) 0%, rgba(197, 48, 48, 0.1) 100%) !important;
+    color: #c53030 !important;
+    border-left: 4px solid var(--danger-color) !important;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(66, 153, 225, 0.1) 0%, rgba(49, 130, 206, 0.1) 100%) !important;
+    color: #3182ce !important;
+    border-left: 4px solid var(--sky-blue) !important;
+}
+
+/* ===== ANIMAÇÕES E MICRO-INTERAÇÕES ===== */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out !important;
+}
+
+.pulse-on-hover:hover {
+    animation: pulse 1s infinite !important;
+}
+
+/* ===== MELHORIAS PARA ÍCONES ===== */
+.fas, .far, .fab {
+    transition: var(--transition) !important;
+}
+
+.btn:hover .fas,
+.btn:hover .far,
+.btn:hover .fab {
+    transform: scale(1.1) !important;
+}
+
+/* ===== LOADING STATES ===== */
+.btn.loading {
+    pointer-events: none !important;
+    opacity: 0.7 !important;
+}
+
+.btn.loading::after {
+    content: '' !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin-left: 8px !important;
+    border: 2px solid transparent !important;
+    border-top: 2px solid currentColor !important;
+    border-radius: 50% !important;
+    animation: spin 1s linear infinite !important;
+    display: inline-block !important;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+

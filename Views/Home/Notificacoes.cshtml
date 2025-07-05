@@ -1,0 +1,315 @@
+@{
+    ViewData["Title"] = "Notificações - FeedHope";
+}
+
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); min-height: 100vh;">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 text-dark mb-1">
+                        <i class="fas fa-bell text-info me-2"></i>
+                        Central de Notificações
+                    </h1>
+                    <p class="text-muted mb-0">Acompanhe todas as atualizações e alertas importantes</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-info" onclick="NotificationCenter.markAllAsRead()">
+                        <i class="fas fa-check-double me-1"></i>
+                        Marcar todas como lidas
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="NotificationCenter.clearAll()">
+                        <i class="fas fa-trash me-1"></i>
+                        Limpar todas
+                    </button>
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalConfiguracoes">
+                        <i class="fas fa-cog me-1"></i>
+                        Configurações
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <label for="filterTipo" class="form-label">Tipo de Notificação</label>
+                            <select class="form-select" id="filterTipo">
+                                <option value="">Todos os tipos</option>
+                                <option value="info">📢 Informações</option>
+                                <option value="warning">⚠️ Alertas</option>
+                                <option value="success">✅ Sucessos</option>
+                                <option value="danger">🚨 Urgentes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterStatus" class="form-label">Status</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">Todas</option>
+                                <option value="unread">Não lidas</option>
+                                <option value="read">Lidas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterPeriodo" class="form-label">Período</label>
+                            <select class="form-select" id="filterPeriodo">
+                                <option value="">Todas</option>
+                                <option value="today">Hoje</option>
+                                <option value="week">Esta semana</option>
+                                <option value="month">Este mês</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-outline-secondary w-100" onclick="NotificationCenter.resetFilters()">
+                                <i class="fas fa-undo me-1"></i>
+                                Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="text-info mb-2">
+                        <i class="fas fa-bell fa-2x"></i>
+                    </div>
+                    <h4 class="mb-1" id="totalNotificacoes">0</h4>
+                    <small class="text-muted">Total de Notificações</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="text-warning mb-2">
+                        <i class="fas fa-envelope fa-2x"></i>
+                    </div>
+                    <h4 class="mb-1" id="naoLidas">0</h4>
+                    <small class="text-muted">Não Lidas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="text-danger mb-2">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    </div>
+                    <h4 class="mb-1" id="urgentes">0</h4>
+                    <small class="text-muted">Urgentes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="text-success mb-2">
+                        <i class="fas fa-calendar-day fa-2x"></i>
+                    </div>
+                    <h4 class="mb-1" id="hoje">0</h4>
+                    <small class="text-muted">Hoje</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Notificações -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Suas Notificações
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="notificationsList">
+                        <!-- Notificações serão carregadas aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Configurações -->
+<div class="modal fade" id="modalConfiguracoes" tabindex="-1" aria-labelledby="modalConfiguracoesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="modalConfiguracoesLabel">
+                    <i class="fas fa-cog me-2"></i>
+                    Configurações de Notificações
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                
+                <!-- Notificações por Email -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        Notificações por E-mail
+                    </h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="emailAlimentos" checked>
+                        <label class="form-check-label" for="emailAlimentos">
+                            Novos alimentos disponíveis
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="emailVencimento" checked>
+                        <label class="form-check-label" for="emailVencimento">
+                            Alimentos próximos ao vencimento
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="emailColetas" checked>
+                        <label class="form-check-label" for="emailColetas">
+                            Atualizações de coletas
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="emailRelatorios">
+                        <label class="form-check-label" for="emailRelatorios">
+                            Relatórios semanais
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Notificações Push -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-mobile-alt me-2"></i>
+                        Notificações Push
+                    </h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="pushUrgentes" checked>
+                        <label class="form-check-label" for="pushUrgentes">
+                            Alertas urgentes
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="pushColetas" checked>
+                        <label class="form-check-label" for="pushColetas">
+                            Confirmações de coleta
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="pushLembretes">
+                        <label class="form-check-label" for="pushLembretes">
+                            Lembretes diários
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Frequência -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-clock me-2"></i>
+                        Frequência de Notificações
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="frequenciaEmail" class="form-label">E-mail</label>
+                            <select class="form-select" id="frequenciaEmail">
+                                <option value="imediato">Imediato</option>
+                                <option value="diario" selected>Resumo diário</option>
+                                <option value="semanal">Resumo semanal</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="horarioEmail" class="form-label">Horário preferido</label>
+                            <input type="time" class="form-control" id="horarioEmail" value="09:00">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros Automáticos -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-filter me-2"></i>
+                        Filtros Automáticos
+                    </h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="filtroDistancia">
+                        <label class="form-check-label" for="filtroDistancia">
+                            Apenas alimentos em um raio de 
+                            <input type="number" class="form-control d-inline-block" style="width: 80px;" value="10" min="1" max="100"> km
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="filtroCategorias">
+                        <label class="form-check-label" for="filtroCategorias">
+                            Apenas categorias de interesse
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info" onclick="NotificationCenter.saveSettings()">
+                    <i class="fas fa-save me-2"></i>
+                    Salvar Configurações
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes da Notificação -->
+<div class="modal fade" id="modalDetalhesNotificacao" tabindex="-1" aria-labelledby="modalDetalhesNotificacaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetalhesNotificacaoLabel">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Detalhes da Notificação
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalDetalhesNotificacaoContent">
+                <!-- Conteúdo será carregado dinamicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="btnAcaoNotificacao" style="display: none;">
+                    Executar Ação
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/auth.js"></script>
+    <script src="~/js/notification-center.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticação
+            if (!Auth.isLoggedIn()) {
+                window.location.href = '@Url.Action("Login", "Home")';
+                return;
+            }
+            
+            // Inicializar central de notificações
+            NotificationCenter.init();
+        });
+    </script>
+}
+

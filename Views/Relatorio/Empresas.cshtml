@@ -1,0 +1,327 @@
+@{
+    ViewData["Title"] = "Relatório de Empresas";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-building me-2 text-secondary"></i>Relatório de Empresas</h2>
+        <p class="text-muted">Ranking e estatísticas das empresas parceiras do FeedHope</p>
+    </div>
+</div>
+
+<!-- Estatísticas gerais -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@((IEnumerable<dynamic>)ViewBag.RankingEmpresas).Count()</div>
+            <div class="stat-label">Empresas Ativas</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@((IEnumerable<dynamic>)ViewBag.RankingEmpresas).Sum(e => e.TotalColetas)</div>
+            <div class="stat-label">Total de Coletas</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@((IEnumerable<dynamic>)ViewBag.RankingEmpresas).Sum(e => e.QuantidadeTotal).ToString("N1")</div>
+            <div class="stat-label">Quantidade Total (kg)</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@ViewBag.EstatisticasPorTipo.Count()</div>
+            <div class="stat-label">Tipos de Empresa</div>
+        </div>
+    </div>
+</div>
+
+<!-- Ranking de empresas -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-trophy me-2"></i>Ranking de Empresas por Quantidade Doada</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Posição</th>
+                                <th>Empresa</th>
+                                <th>Tipo</th>
+                                <th>Coletas</th>
+                                <th>Quantidade Total</th>
+                                <th>Última Coleta</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var posicao = 1;
+                            }
+                            @foreach (var empresa in ViewBag.RankingEmpresas.Take(10))
+                            {
+                                <tr>
+                                    <td>
+                                        @if (posicao <= 3)
+                                        {
+                                            <span class="badge bg-warning">
+                                                @if (posicao == 1) { <i class="fas fa-trophy"></i> }
+                                                else if (posicao == 2) { <i class="fas fa-medal"></i> }
+                                                else { <i class="fas fa-award"></i> }
+                                                @posicao°
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@posicao°</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <strong>@empresa.Nome</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@empresa.Tipo</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">@empresa.TotalColetas</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">@empresa.QuantidadeTotal.ToString("N1") kg</span>
+                                    </td>
+                                    <td>
+                                        @if (empresa.UltimaColeta.HasValue)
+                                        {
+                                            @empresa.UltimaColeta.Value.ToString("dd/MM/yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (empresa.Status == "Ativo")
+                                        {
+                                            <span class="badge bg-success">@empresa.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@empresa.Status</span>
+                                        }
+                                    </td>
+                                </tr>
+                                posicao++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-pie me-2"></i>Top 5 Empresas</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="graficoTopEmpresas" width="300" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estatísticas por tipo de empresa -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar me-2"></i>Estatísticas por Tipo de Empresa</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tipo de Empresa</th>
+                                <th>Nº Empresas</th>
+                                <th>Empresas Ativas</th>
+                                <th>Total Coletas</th>
+                                <th>Quantidade Total</th>
+                                <th>Média por Empresa</th>
+                                <th>Taxa de Atividade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var tipo in ViewBag.EstatisticasPorTipo)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@tipo.TipoEmpresa</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@tipo.NumeroEmpresas</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">@tipo.EmpresasAtivas</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">@tipo.TotalColetas</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning">@tipo.QuantidadeTotal.ToString("N1") kg</span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var mediaPorEmpresa = tipo.NumeroEmpresas > 0 ? (double)tipo.QuantidadeTotal / tipo.NumeroEmpresas : 0;
+                                        }
+                                        @mediaPorEmpresa.ToString("N1") kg
+                                    </td>
+                                    <td>
+                                        @{
+                                            var taxaAtividade = tipo.NumeroEmpresas > 0 ? (double)tipo.EmpresasAtivas / tipo.NumeroEmpresas * 100 : 0;
+                                        }
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar @(taxaAtividade >= 80 ? "bg-success" : taxaAtividade >= 60 ? "bg-warning" : "bg-danger")" 
+                                                 role="progressbar" style="width: @(taxaAtividade)%">
+                                                @taxaAtividade.ToString("F1")%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico de distribuição por tipo -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-doughnut me-2"></i>Distribuição por Tipo</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="graficoTiposEmpresa" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line me-2"></i>Performance por Tipo</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="graficoPerformance" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Gráfico Top 5 Empresas
+    const ctxTop = document.getElementById('graficoTopEmpresas').getContext('2d');
+    const topEmpresas = @Html.Raw(Json.Serialize(ViewBag.RankingEmpresas.Take(5)));
+    
+    new Chart(ctxTop, {
+        type: 'doughnut',
+        data: {
+            labels: topEmpresas.map(e => e.nome),
+            datasets: [{
+                data: topEmpresas.map(e => e.quantidadeTotal),
+                backgroundColor: [
+                    '#38a169', '#4299e1', '#ed8936', '#e53e3e', '#805ad5'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.parsed.toFixed(1) + ' kg';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de tipos de empresa
+    const ctxTipos = document.getElementById('graficoTiposEmpresa').getContext('2d');
+    const tiposEmpresa = @Html.Raw(Json.Serialize(ViewBag.EstatisticasPorTipo));
+    
+    new Chart(ctxTipos, {
+        type: 'pie',
+        data: {
+            labels: tiposEmpresa.map(t => t.tipoEmpresa),
+            datasets: [{
+                data: tiposEmpresa.map(t => t.numeroEmpresas),
+                backgroundColor: [
+                    '#38a169', '#4299e1', '#ed8936', '#e53e3e', '#805ad5',
+                    '#38b2ac', '#d69e2e', '#f56565', '#9f7aea', '#4fd1c7'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Gráfico de performance por tipo
+    const ctxPerf = document.getElementById('graficoPerformance').getContext('2d');
+    
+    new Chart(ctxPerf, {
+        type: 'bar',
+        data: {
+            labels: tiposEmpresa.map(t => t.tipoEmpresa),
+            datasets: [{
+                label: 'Quantidade Total (kg)',
+                data: tiposEmpresa.map(t => t.quantidadeTotal),
+                backgroundColor: '#38a169',
+                borderColor: '#2f855a',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+</script>
+}
+

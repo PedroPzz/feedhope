@@ -1,0 +1,42 @@
+﻿@model FeedHope.Models.AlimentoModel
+
+@{
+    ViewData["Title"] = "Editar Alimento";
+}
+
+<h2>Editar Alimento</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Tipo" class="form-label"></label>
+        <input asp-for="Tipo" class="form-control" />
+        <span asp-validation-for="Tipo" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Quantidade" class="form-label"></label>
+        <input asp-for="Quantidade" class="form-control" />
+        <span asp-validation-for="Quantidade" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Validade" class="form-label"></label>
+        <input asp-for="Validade" type="date" class="form-control" />
+        <span asp-validation-for="Validade" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EmpresaId" class="form-label">Empresa</label>
+        <select asp-for="EmpresaId" asp-items="ViewBag.Empresas" class="form-control"></select>
+        <span asp-validation-for="EmpresaId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,0 +1,191 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Criar Conta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <div class="mb-3">
+                        <img src="~/images/leaf-icon.png" alt="FeedHope" class="img-fluid" style="max-height: 60px;">
+                    </div>
+                    <h3 class="font-weight-light mb-0">Criar Nova Conta</h3>
+                    <p class="mb-0">FeedHope - Sistema de Gestão de Alimentos</p>
+                </div>
+                <div class="card-body">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.NomeCompleto" class="form-control" autocomplete="name" aria-required="true" placeholder="Nome Completo" />
+                                    <label asp-for="Input.NomeCompleto">Nome Completo</label>
+                                    <span asp-validation-for="Input.NomeCompleto" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="nome@exemplo.com" />
+                                    <label asp-for="Input.Email">Email</label>
+                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.CPF" class="form-control" placeholder="000.000.000-00" />
+                                    <label asp-for="Input.CPF">CPF</label>
+                                    <span asp-validation-for="Input.CPF" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.Telefone" class="form-control" placeholder="(00) 00000-0000" />
+                                    <label asp-for="Input.Telefone">Telefone</label>
+                                    <span asp-validation-for="Input.Telefone" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Cargo" class="form-control" placeholder="Cargo/Função" />
+                            <label asp-for="Input.Cargo">Cargo/Função</label>
+                            <span asp-validation-for="Input.Cargo" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <textarea asp-for="Input.Endereco" class="form-control" style="height: 80px;" placeholder="Endereço completo"></textarea>
+                            <label asp-for="Input.Endereco">Endereço</label>
+                            <span asp-validation-for="Input.Endereco" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Senha" />
+                                    <label asp-for="Input.Password">Senha</label>
+                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Confirmar Senha" />
+                                    <label asp-for="Input.ConfirmPassword">Confirmar Senha</label>
+                                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Requisitos da senha:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Mínimo de 6 caracteres</li>
+                                <li>Pelo menos uma letra maiúscula</li>
+                                <li>Pelo menos uma letra minúscula</li>
+                                <li>Pelo menos um número</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Criar Conta
+                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <p class="small">
+                                Já tem uma conta? <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Entrar</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light text-center py-3">
+                    <div class="small text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Suas informações estão seguras e serão utilizadas apenas para o sistema FeedHope.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Máscara para CPF
+            const cpfInput = document.getElementById('Input_CPF');
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    e.target.value = value;
+                });
+            }
+            
+            // Máscara para telefone
+            const telefoneInput = document.getElementById('Input_Telefone');
+            if (telefoneInput) {
+                telefoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length <= 10) {
+                        value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                        value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                    } else {
+                        value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                        value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                    }
+                    e.target.value = value;
+                });
+            }
+            
+            // Validação de senha em tempo real
+            const passwordInput = document.getElementById('Input_Password');
+            const confirmPasswordInput = document.getElementById('Input_ConfirmPassword');
+            
+            if (passwordInput && confirmPasswordInput) {
+                function validatePasswords() {
+                    const password = passwordInput.value;
+                    const confirmPassword = confirmPasswordInput.value;
+                    
+                    if (confirmPassword && password !== confirmPassword) {
+                        confirmPasswordInput.setCustomValidity('As senhas não coincidem');
+                    } else {
+                        confirmPasswordInput.setCustomValidity('');
+                    }
+                }
+                
+                passwordInput.addEventListener('input', validatePasswords);
+                confirmPasswordInput.addEventListener('input', validatePasswords);
+            }
+        });
+    </script>
+    
+    <style>
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label,
+        .form-floating > .form-select ~ label {
+            opacity: .65;
+            transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+        
+        .alert-info {
+            background-color: #e7f3ff;
+            border-color: #b3d7ff;
+            color: #004085;
+        }
+    </style>
+}
+

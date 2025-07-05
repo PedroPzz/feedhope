@@ -1,0 +1,41 @@
+﻿@model FeedHope.Models.DestinacaoModel
+@{
+    ViewData["Title"] = "Detalhes da Destinação";
+}
+
+<h2>Detalhes da Destinação</h2>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Descrição:</label>
+    <div>@Model.Descricao</div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Quantidade:</label>
+    <div>@Model.Quantidade</div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Data:</label>
+    <div>@Model.Data.ToShortDateString()</div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Coleta:</label>
+    <div>
+        @if (Model.Coleta != null)
+        {
+            <span>@Model.Coleta.DataColeta.ToShortDateString()</span>
+        
+            <br />
+            <small class="text-muted">@Model.Coleta.Endereco</small>
+        }
+        else
+        {
+            <span class="text-muted">Não associada</span>
+        }
+    </div>
+</div>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Editar</a>
+<a asp-action="Index" class="btn btn-secondary">Voltar</a>

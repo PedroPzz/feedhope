@@ -1,0 +1,491 @@
+@{
+    ViewData["Title"] = "Relatórios e Análises - FeedHope";
+}
+
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); min-height: 100vh;">
+    
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 text-dark mb-1">
+                        <i class="fas fa-chart-bar text-info me-2"></i>
+                        Relatórios e Análises
+                    </h1>
+                    <p class="text-muted mb-0">Insights e estatísticas detalhadas sobre o FeedHope</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-info" onclick="Relatorios.refreshData()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-outline-success" onclick="Relatorios.exportReport()">
+                        <i class="fas fa-download me-1"></i>
+                        Exportar
+                    </button>
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalFiltros">
+                        <i class="fas fa-filter me-1"></i>
+                        Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros Rápidos -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <label for="periodoRelatorio" class="form-label">Período</label>
+                            <select class="form-select" id="periodoRelatorio">
+                                <option value="7">Últimos 7 dias</option>
+                                <option value="30" selected>Últimos 30 dias</option>
+                                <option value="90">Últimos 3 meses</option>
+                                <option value="365">Último ano</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3" id="customDateRange" style="display: none;">
+                            <label for="dataInicio" class="form-label">Data Início</label>
+                            <input type="date" class="form-control" id="dataInicio">
+                        </div>
+                        <div class="col-md-3" id="customDateRangeEnd" style="display: none;">
+                            <label for="dataFim" class="form-label">Data Fim</label>
+                            <input type="date" class="form-control" id="dataFim">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tipoRelatorio" class="form-label">Tipo de Relatório</label>
+                            <select class="form-select" id="tipoRelatorio">
+                                <option value="geral">📊 Visão Geral</option>
+                                <option value="alimentos">🍎 Alimentos</option>
+                                <option value="empresas">🏢 Empresas</option>
+                                <option value="impacto">🌱 Impacto Ambiental</option>
+                                <option value="logistica">🚛 Logística</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" onclick="Relatorios.generateReport()">
+                                <i class="fas fa-chart-line me-1"></i>
+                                Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs Principais -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-apple-alt text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Total de Alimentos</h6>
+                            <h3 class="mb-0" id="kpiTotalAlimentos">0</h3>
+                            <small class="text-success" id="kpiTotalAlimentosTrend">+0%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-weight text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Peso Total (kg)</h6>
+                            <h3 class="mb-0" id="kpiPesoTotal">0</h3>
+                            <small class="text-warning" id="kpiPesoTotalTrend">+0%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-truck text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Coletas Realizadas</h6>
+                            <h3 class="mb-0" id="kpiColetas">0</h3>
+                            <small class="text-info" id="kpiColetasTrend">+0%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-leaf text-white"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">CO₂ Evitado (kg)</h6>
+                            <h3 class="mb-0" id="kpiCO2Evitado">0</h3>
+                            <small class="text-danger" id="kpiCO2EvitadoTrend">+0%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos Principais -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line text-success me-2"></i>
+                            Evolução Temporal
+                        </h5>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-secondary active" onclick="Relatorios.changeTimeChart('alimentos')">Alimentos</button>
+                            <button class="btn btn-outline-secondary" onclick="Relatorios.changeTimeChart('peso')">Peso</button>
+                            <button class="btn btn-outline-secondary" onclick="Relatorios.changeTimeChart('coletas')">Coletas</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartEvolucao" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie text-warning me-2"></i>
+                        Distribuição por Categoria
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartCategorias" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análises Detalhadas -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar text-info me-2"></i>
+                        Top 10 Empresas Doadoras
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartTopEmpresas" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock text-danger me-2"></i>
+                        Análise de Prioridades
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartPrioridades" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa de Calor e Impacto -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map text-primary me-2"></i>
+                        Mapa de Calor - Densidade de Doações
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="heatmapContainer" style="height: 300px; background: linear-gradient(45deg, #e8f5e8 25%, transparent 25%), 
+                                linear-gradient(-45deg, #e8f5e8 25%, transparent 25%), 
+                                linear-gradient(45deg, transparent 75%, #e8f5e8 75%), 
+                                linear-gradient(-45deg, transparent 75%, #e8f5e8 75%);
+                         background-size: 20px 20px;
+                         background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+                         display: flex;
+                         align-items: center;
+                         justify-content: center;
+                         color: #666;
+                         border-radius: 8px;">
+                        <div style="text-align: center;">
+                            <i class="fas fa-fire fa-3x text-danger mb-3"></i><br>
+                            <strong>Mapa de Calor</strong><br>
+                            <small class="text-muted">Visualização da densidade de doações por região</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-leaf text-success me-2"></i>
+                        Impacto Ambiental
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="display-4 text-success" id="impactoCO2">0</div>
+                        <small class="text-muted">kg de CO₂ evitados</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small>Equivalente a:</small>
+                        </div>
+                        <div class="impact-equivalents">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-tree text-success me-2"></i>
+                                <span id="equivalenteArvores">0 árvores plantadas</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-car text-info me-2"></i>
+                                <span id="equivalenteCarro">0 km de carro</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-lightbulb text-warning me-2"></i>
+                                <span id="equivalenteLampada">0 horas de lâmpada</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mb-2" style="height: 10px;">
+                        <div class="progress-bar bg-success" id="progressoMeta" style="width: 0%"></div>
+                    </div>
+                    <small class="text-muted">Meta mensal: 1000 kg CO₂</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Dados Detalhados -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-table me-2"></i>
+                            Dados Detalhados
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-info" onclick="Relatorios.exportTable('csv')">
+                                <i class="fas fa-file-csv me-1"></i>
+                                CSV
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="Relatorios.exportTable('excel')">
+                                <i class="fas fa-file-excel me-1"></i>
+                                Excel
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="Relatorios.exportTable('pdf')">
+                                <i class="fas fa-file-pdf me-1"></i>
+                                PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="tabelaDados">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Empresa</th>
+                                    <th>Alimento</th>
+                                    <th>Categoria</th>
+                                    <th>Quantidade</th>
+                                    <th>Status</th>
+                                    <th>Impacto CO₂</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaDadosBody">
+                                <!-- Dados serão carregados aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Filtros Avançados -->
+<div class="modal fade" id="modalFiltros" tabindex="-1" aria-labelledby="modalFiltrosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="modalFiltrosLabel">
+                    <i class="fas fa-filter me-2"></i>
+                    Filtros Avançados
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                
+                <!-- Filtros por Empresa -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">Empresas</h6>
+                    <div class="row">
+                        <div class="col-12">
+                            <select class="form-select" id="filtroEmpresas" multiple>
+                                <!-- Opções serão carregadas dinamicamente -->
+                            </select>
+                            <small class="form-text text-muted">Segure Ctrl para selecionar múltiplas empresas</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros por Categoria -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">Categorias de Alimentos</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroFrutas" checked>
+                                <label class="form-check-label" for="filtroFrutas">🍎 Frutas</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroVerduras" checked>
+                                <label class="form-check-label" for="filtroVerduras">🥕 Verduras</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroPaes" checked>
+                                <label class="form-check-label" for="filtroPaes">🍞 Pães</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroLaticinios" checked>
+                                <label class="form-check-label" for="filtroLaticinios">🧀 Laticínios</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroCarnes" checked>
+                                <label class="form-check-label" for="filtroCarnes">🥩 Carnes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroOutros" checked>
+                                <label class="form-check-label" for="filtroOutros">📦 Outros</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros por Status -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">Status</h6>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroDisponivel" checked>
+                                <label class="form-check-label" for="filtroDisponivel">Disponível</label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroColetado" checked>
+                                <label class="form-check-label" for="filtroColetado">Coletado</label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filtroExpirado">
+                                <label class="form-check-label" for="filtroExpirado">Expirado</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros por Quantidade -->
+                <div class="mb-4">
+                    <h6 class="border-bottom pb-2 mb-3">Faixa de Quantidade</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="quantidadeMin" class="form-label">Mínima</label>
+                            <input type="number" class="form-control" id="quantidadeMin" value="0" min="0">
+                        </div>
+                        <div class="col-6">
+                            <label for="quantidadeMax" class="form-label">Máxima</label>
+                            <input type="number" class="form-control" id="quantidadeMax" value="1000" min="0">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="Relatorios.resetFilters()">
+                    Limpar Filtros
+                </button>
+                <button type="button" class="btn btn-info" onclick="Relatorios.applyFilters()" data-bs-dismiss="modal">
+                    Aplicar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/auth.js"></script>
+    <script src="~/js/relatorios.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticação
+            if (!Auth.isLoggedIn()) {
+                window.location.href = '@Url.Action("Login", "Home")';
+                return;
+            }
+            
+            // Inicializar relatórios
+            Relatorios.init();
+        });
+    </script>
+}
+

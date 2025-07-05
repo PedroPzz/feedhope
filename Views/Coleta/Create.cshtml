@@ -1,0 +1,41 @@
+﻿@model FeedHope.Models.ColetaModel
+
+@{
+    ViewData["Title"] = "Nova Coleta";
+}
+
+<h2>Cadastrar Coleta</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<form asp-action="Create" method="post" id="coletaForm">
+    <div class="mb-3">
+        <label asp-for="DataColeta" class="form-label"></label>
+        <input asp-for="DataColeta" type="date" class="form-control" />
+        <span asp-validation-for="DataColeta" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Endereco" class="form-label"></label>
+        <input asp-for="Endereco" class="form-control" />
+        <span asp-validation-for="Endereco" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="EmpresaId" class="form-label">Empresa</label>
+        <select asp-for="EmpresaId" asp-items="ViewBag.Empresas" class="form-control"></select>
+        <span asp-validation-for="EmpresaId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

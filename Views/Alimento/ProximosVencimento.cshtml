@@ -1,0 +1,209 @@
+@model IEnumerable<FeedHope.Models.AlimentoModel>
+
+@{
+    ViewData["Title"] = "Alimentos Próximos ao Vencimento";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Alimentos Próximos ao Vencimento</h2>
+        <p class="text-muted">Alimentos que vencem nos próximos 3 dias e precisam de atenção urgente</p>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>Ótima notícia!</strong> Não há alimentos próximos ao vencimento no momento.
+    </div>
+}
+else
+{
+    <!-- Estatísticas rápidas -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <div class="stat-number text-warning">@Model.Count()</div>
+                <div class="stat-label">Alimentos Urgentes</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <div class="stat-number text-danger">@Model.Count(a => (a.Validade - DateTime.Now).Days <= 1)</div>
+                <div class="stat-label">Vencem Hoje/Amanhã</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <div class="stat-number text-info">@Model.Sum(a => a.Quantidade).ToString("N1")</div>
+                <div class="stat-label">Quantidade Total</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <div class="stat-number text-secondary">@Model.Select(a => a.EmpresaId).Distinct().Count()</div>
+                <div class="stat-label">Empresas Envolvidas</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerta de urgência -->
+    @if (Model.Any(a => (a.Validade - DateTime.Now).Days <= 1))
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Atenção!</strong> Existem @Model.Count(a => (a.Validade - DateTime.Now).Days <= 1) alimentos que vencem hoje ou amanhã. 
+            <strong>Ação urgente necessária!</strong>
+        </div>
+    }
+
+    <!-- Lista de alimentos -->
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="fas fa-list me-2"></i>Lista de Alimentos por Urgência</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Urgência</th>
+                            <th>Alimento</th>
+                            <th>Empresa</th>
+                            <th>Quantidade</th>
+                            <th>Validade</th>
+                            <th>Dias Restantes</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var alimento in Model)
+                        {
+                            var diasRestantes = (alimento.Validade - DateTime.Now).Days;
+                            var urgenciaClass = "";
+                            var urgenciaTexto = "";
+                            var urgenciaIcon = "";
+
+                            if (diasRestantes <= 0)
+                            {
+                                urgenciaClass = "bg-danger";
+                                urgenciaTexto = "VENCIDO";
+                                urgenciaIcon = "fas fa-times-circle";
+                            }
+                            else if (diasRestantes <= 1)
+                            {
+                                urgenciaClass = "bg-danger";
+                                urgenciaTexto = "CRÍTICO";
+                                urgenciaIcon = "fas fa-exclamation-triangle";
+                            }
+                            else if (diasRestantes <= 2)
+                            {
+                                urgenciaClass = "bg-warning";
+                                urgenciaTexto = "URGENTE";
+                                urgenciaIcon = "fas fa-exclamation";
+                            }
+                            else
+                            {
+                                urgenciaClass = "bg-info";
+                                urgenciaTexto = "ATENÇÃO";
+                                urgenciaIcon = "fas fa-info";
+                            }
+                            
+                            <tr class="@(diasRestantes <= 1 ? "table-danger" : diasRestantes <= 2 ? "table-warning" : "")">
+                                <td>
+                                    <span class="badge @urgenciaClass">
+                                        <i class="@urgenciaIcon me-1"></i>@urgenciaTexto
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong>@alimento.Tipo</strong>
+                                    @if (!string.IsNullOrEmpty(alimento.Descricao))
+                                    {
+                                        <br><small class="text-muted">@alimento.Descricao</small>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">@alimento.Empresa?.Nome</span>
+                                </td>
+                                <td>
+                                    <strong>@alimento.Quantidade.ToString("N1") @alimento.UnidadeMedida</strong>
+                                </td>
+                                <td>
+                                    <strong>@alimento.Validade.ToString("dd/MM/yyyy")</strong>
+                                    <br><small class="text-muted">@alimento.Validade.ToString("dddd")</small>
+                                </td>
+                                <td>
+                                    @if (diasRestantes <= 0)
+                                    {
+                                        <span class="badge bg-danger">VENCIDO</span>
+                                    }
+                                    else if (diasRestantes == 1)
+                                    {
+                                        <span class="badge bg-danger">1 dia</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">@diasRestantes dias</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group-vertical btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@alimento.Id" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye me-1"></i>Detalhes
+                                        </a>
+                                        <a asp-controller="Coleta" asp-action="Create" asp-route-alimentoId="@alimento.Id" class="btn btn-success btn-sm">
+                                            <i class="fas fa-truck me-1"></i>Solicitar Coleta
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações rápidas -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5><i class="fas fa-truck me-2"></i>Solicitar Coleta Urgente</h5>
+                    <p class="text-muted">Solicite coleta para todos os alimentos críticos</p>
+                    <a asp-controller="Coleta" asp-action="Create" class="btn btn-warning">
+                        <i class="fas fa-plus me-1"></i>Nova Coleta Urgente
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5><i class="fas fa-bell me-2"></i>Configurar Alertas</h5>
+                    <p class="text-muted">Configure notificações automáticas</p>
+                    <a href="#" class="btn btn-info">
+                        <i class="fas fa-cog me-1"></i>Configurar Alertas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Botões de navegação -->
+<div class="row mt-4">
+    <div class="col-12">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Voltar para Todos os Alimentos
+        </a>
+        <a asp-action="Disponiveis" class="btn btn-success">
+            <i class="fas fa-check-circle me-1"></i>Ver Alimentos Disponíveis
+        </a>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Cadastrar Novo Alimento
+        </a>
+    </div>
+</div>
+

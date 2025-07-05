@@ -1,0 +1,213 @@
+@{
+    ViewData["Title"] = "FeedHope - Plataforma de Reaproveitamento de Alimentos";
+}
+
+<!-- Hero Section Otimizada -->
+<section class="hero-section" role="banner">
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-10 mx-auto text-center">
+                <h1 class="hero-title fade-in-up" id="main-title">
+                    <img src="/images/leaf-icon.png" alt="Ícone de folha representando sustentabilidade" class="sustainable-icon leaf-float" style="width: 64px; height: 64px; margin-right: 1rem;">
+                    FeedHope
+                </h1>
+                <p class="hero-subtitle fade-in-up" role="doc-subtitle">
+                    Conectando empresas com a UFRA para reaproveitamento de alimentos
+                </p>
+                <p class="lead fade-in-up" style="font-size: 1.1rem; margin-bottom: 2.5rem;">
+                    Plataforma que facilita a doação de alimentos excedentes para projetos sustentáveis da Universidade Federal Rural da Amazônia.
+                </p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap fade-in-up" role="group" aria-label="Ações principais">
+                    <a class="btn btn-primary btn-lg pulse-on-hover" asp-controller="Empresa" asp-action="Create" 
+                       aria-label="Cadastrar sua empresa na plataforma FeedHope">
+                        <i class="fas fa-plus me-2" aria-hidden="true"></i>
+                        Cadastrar Empresa
+                    </a>
+                    <a class="btn btn-outline-primary btn-lg" asp-controller="Alimento" asp-action="Index"
+                       aria-label="Ver lista de alimentos disponíveis para doação">
+                        <i class="fas fa-list me-2" aria-hidden="true"></i>
+                        Ver Alimentos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seção Como Funciona - Simplificada -->
+<section class="py-5" role="main" aria-labelledby="como-funciona-title">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 id="como-funciona-title" class="display-5 fw-bold mb-3" style="color: var(--dark-green);">
+                    Como Funciona
+                </h2>
+                <p class="lead text-muted">
+                    Processo simples em 3 etapas
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card fade-in-up text-center" tabindex="0">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-building text-success" style="font-size: 3rem;" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="feature-title">1. Cadastre sua Empresa</h3>
+                    <p class="feature-description">
+                        Registre sua empresa e os alimentos disponíveis para doação.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card fade-in-up text-center" tabindex="0">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-truck text-success" style="font-size: 3rem;" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="feature-title">2. Coleta Organizada</h3>
+                    <p class="feature-description">
+                        A UFRA organiza a coleta dos alimentos de forma eficiente.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card fade-in-up text-center" tabindex="0">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-recycle text-success" style="font-size: 3rem;" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="feature-title">3. Reaproveitamento</h3>
+                    <p class="feature-description">
+                        Alimentos são destinados para projetos sustentáveis e pesquisa.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seção de Benefícios -->
+<section class="py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);" 
+         role="region" aria-labelledby="beneficios-title">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 id="beneficios-title" class="display-6 fw-bold mb-4" style="color: var(--dark-green);">
+                    Por que Participar?
+                </h2>
+                <div class="row g-4 mt-4">
+                    <div class="col-md-4">
+                        <div class="benefit-item" tabindex="0">
+                            <i class="fas fa-leaf text-success mb-3" style="font-size: 2.5rem;" aria-hidden="true"></i>
+                            <h4>Sustentabilidade</h4>
+                            <p class="text-muted">Reduza o desperdício e contribua com o meio ambiente</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="benefit-item" tabindex="0">
+                            <i class="fas fa-graduation-cap text-success mb-3" style="font-size: 2.5rem;" aria-hidden="true"></i>
+                            <h4>Educação</h4>
+                            <p class="text-muted">Apoie projetos acadêmicos e de pesquisa</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="benefit-item" tabindex="0">
+                            <i class="fas fa-handshake text-success mb-3" style="font-size: 2.5rem;" aria-hidden="true"></i>
+                            <h4>Responsabilidade Social</h4>
+                            <p class="text-muted">Fortaleça a responsabilidade social da sua empresa</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Final -->
+<section class="py-5" style="background: var(--gradient-primary);" role="region" aria-labelledby="cta-title">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h2 id="cta-title" class="display-6 fw-bold text-white mb-3">
+                    Comece Agora
+                </h2>
+                <p class="lead text-white mb-4" style="opacity: 0.9;">
+                    Faça parte da rede de empresas que contribuem com a sustentabilidade na Amazônia.
+                </p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap" role="group" aria-label="Ações de cadastro">
+                    <a class="btn btn-light btn-lg" asp-controller="Empresa" asp-action="Create"
+                       aria-label="Cadastrar empresa para começar a doar alimentos">
+                        <i class="fas fa-rocket me-2" aria-hidden="true"></i>
+                        Cadastrar Empresa
+                    </a>
+                    <a class="btn btn-outline-light btn-lg" asp-controller="Home" asp-action="Sobre"
+                       aria-label="Saber mais sobre o projeto FeedHope">
+                        <i class="fas fa-info-circle me-2" aria-hidden="true"></i>
+                        Saiba Mais
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Script para melhorar acessibilidade -->
+<link rel="stylesheet" href="~/css/_Index.css" />
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar animação aos elementos quando entram na viewport
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observar todos os elementos com fade-in-up
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+        
+        // Melhorar navegação por teclado
+        document.querySelectorAll('.feature-card, .benefit-item').forEach(card => {
+            card.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        });
+        
+        // Anunciar mudanças para leitores de tela
+        const announceChange = (message) => {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+            setTimeout(() => document.body.removeChild(announcement), 1000);
+        };
+        
+        // Anunciar quando animações terminam
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            el.addEventListener('animationend', function() {
+                if (this.id === 'main-title') {
+                    announceChange('Página carregada. FeedHope - Plataforma de reaproveitamento de alimentos.');
+                }
+            });
+        });
+    });
+</script>

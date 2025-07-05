@@ -1,0 +1,28 @@
+﻿@model FeedHope.Models.RelatorioModel
+
+@{
+    ViewData["Title"] = "Novo Relatório";
+}
+
+<h2>Novo Relatório</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Titulo"></label>
+        <input asp-for="Titulo" class="form-control" />
+        <span asp-validation-for="Titulo" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DataGeracao"></label>
+        <input asp-for="DataGeracao" type="date" class="form-control" />
+        <span asp-validation-for="DataGeracao" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success mt-3">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Voltar</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

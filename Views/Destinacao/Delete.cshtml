@@ -1,0 +1,46 @@
+﻿@model FeedHope.Models.DestinacaoModel
+@{
+    ViewData["Title"] = "Excluir Destinação";
+}
+
+<h2>Confirmação de Exclusão</h2>
+
+<p class="lead">Tem certeza de que deseja excluir esta destinação?</p>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Descrição:</label>
+    <div>@Model.Descricao</div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Quantidade:</label>
+    <div>@Model.Quantidade</div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Data:</label>
+    <div>@Model.Data.ToShortDateString()</div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Coleta:</label>
+    <div>
+        @if (Model.Coleta != null)
+        {
+            <span>@Model.Coleta.DataColeta.ToShortDateString()</span>
+        
+            <br />
+            <small class="text-muted">@Model.Coleta.Endereco</small>
+        }
+        else
+        {
+            <span class="text-muted">Não associada</span>
+        }
+    </div>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+</form>

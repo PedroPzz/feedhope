@@ -1,0 +1,23 @@
+﻿@model FeedHope.Models.ColetaModel
+
+@{
+    ViewData["Title"] = "Excluir Coleta";
+}
+
+<h2>Excluir Coleta</h2>
+
+<h4>Tem certeza que deseja excluir esta coleta?</h4>
+
+<dl class="row">
+    <dt class="col-sm-2">Data da Coleta</dt>
+    <dd class="col-sm-10">@Model.DataColeta.ToShortDateString()</dd>
+
+    <dt class="col-sm-2">Empresa</dt>
+    <dd class="col-sm-10">@Model.Empresa?.Nome</dd>
+</dl>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

@@ -1,0 +1,141 @@
+/* Estilos padronizados para botões de ação */
+
+.btn-group .btn {
+    border-radius: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+    border-right: none;
+}
+
+.btn-group .btn:only-child {
+    border-radius: 0.375rem;
+    border-right: none;
+}
+
+/* Estilos específicos para botões de ação */
+.btn-group .btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+}
+
+.btn-group .btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.btn-group .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.btn-group .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.btn-group .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.btn-group .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        border-radius: 0.375rem !important;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 2px;
+        width: 100%;
+    }
+    
+    .btn-group .btn:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .btn-group .btn i {
+        margin-right: 8px;
+    }
+}
+
+/* Efeitos de transição */
+.btn-group .btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-group .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para tooltips */
+.btn[title] {
+    position: relative;
+}
+
+/* Melhorias de acessibilidade */
+.btn-group[aria-label] {
+    position: relative;
+}
+
+.btn:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Estilos para ícones */
+.btn i {
+    margin-right: 4px;
+    font-size: 0.875rem;
+}
+
+/* Variações de tamanho */
+.btn-group .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.btn-group .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+/* Estados desabilitados */
+.btn-group .btn:disabled,
+.btn-group .btn.disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-group .btn:disabled:hover,
+.btn-group .btn.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+

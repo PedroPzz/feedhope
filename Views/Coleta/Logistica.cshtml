@@ -1,0 +1,268 @@
+@model IEnumerable<FeedHope.Models.ColetaModel>
+
+@{
+    ViewData["Title"] = "Logística de Coletas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-route text-primary me-2"></i>
+                        Logística de Coletas
+                    </h3>
+                    <div>
+                        <a href="@Url.Action("Mapa")" class="btn btn-outline-primary">
+                            <i class="fas fa-map-marked-alt me-1"></i>Ver no Mapa
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-truck text-muted" style="font-size: 4rem;"></i>
+                            <h4 class="mt-3 text-muted">Nenhuma coleta para logística</h4>
+                            <p class="text-muted">Não há coletas aprovadas ou em andamento no momento.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Instruções:</strong> Arraste os cards para reorganizar a ordem de coleta. Use os botões de ação para gerenciar o status das coletas.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="coletas-container" class="row">
+                            @foreach (var coleta in Model)
+                            {
+                                <div class="col-lg-6 col-xl-4 mb-4" data-coleta-id="@coleta.Id">
+                                    <div class="card border-left-@(coleta.Status == "Aprovada" ? "primary" : "success") shadow h-100">
+                                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-0 font-weight-bold">@coleta.Empresa?.Nome</h6>
+                                                <small class="text-muted">Ordem: @(coleta.OrdemColeta?.ToString() ?? "Não definida")</small>
+                                            </div>
+                                            <span class="badge badge-@(coleta.Status == "Aprovada" ? "primary" : "success")">
+                                                @coleta.Status
+                                            </span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-2">
+                                                <small class="text-muted">Endereço:</small>
+                                                <p class="mb-1 small">@coleta.Endereco</p>
+                                            </div>
+                                            
+                                            <div class="mb-2">
+                                                <small class="text-muted">Data da Coleta:</small>
+                                                <p class="mb-1">@coleta.DataColeta.ToString("dd/MM/yyyy HH:mm")</p>
+                                            </div>
+
+                                            @if (!string.IsNullOrEmpty(coleta.ResponsavelUFRA))
+                                            {
+                                                <div class="mb-2">
+                                                    <small class="text-muted">Responsável:</small>
+                                                    <p class="mb-1">@coleta.ResponsavelUFRA</p>
+                                                </div>
+                                            }
+
+                                            @if (coleta.Status == "Em Coleta" && coleta.DataInicioColeta.HasValue)
+                                            {
+                                                <div class="mb-2">
+                                                    <small class="text-muted">Iniciada em:</small>
+                                                    <p class="mb-1">@coleta.DataInicioColeta.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(coleta.Observacoes))
+                                            {
+                                                <div class="mb-2">
+                                                    <small class="text-muted">Observações:</small>
+                                                    <p class="small mb-0">@coleta.Observacoes</p>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="card-footer bg-white">
+                                            @if (coleta.Status == "Aprovada")
+                                            {
+                                                <form method="post" action="@Url.Action("IniciarColeta")" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@coleta.Id" />
+                                                    <button type="submit" class="btn btn-success btn-sm w-100 mb-2" 
+                                                            onclick="return confirm('Confirma o início da coleta?')">
+                                                        <i class="fas fa-play me-1"></i>Iniciar Coleta
+                                                    </button>
+                                                </form>
+                                            }
+                                            else if (coleta.Status == "Em Coleta")
+                                            {
+                                                <button type="button" class="btn btn-primary btn-sm w-100 mb-2" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#concluirModal" 
+                                                        data-coleta-id="@coleta.Id"
+                                                        data-empresa-nome="@coleta.Empresa?.Nome">
+                                                    <i class="fas fa-check me-1"></i>Concluir Coleta
+                                                </button>
+                                            }
+                                            
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <a href="@Url.Action("Details", new { id = coleta.Id })" 
+                                                       class="btn btn-outline-primary btn-sm w-100">
+                                                        <i class="fas fa-eye me-1"></i>Detalhes
+                                                    </a>
+                                                </div>
+                                                <div class="col-6">
+                                                    <a href="@Url.Action("Edit", new { id = coleta.Id })" 
+                                                       class="btn btn-outline-secondary btn-sm w-100">
+                                                        <i class="fas fa-edit me-1"></i>Editar
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <button type="button" id="salvarOrdem" class="btn btn-success">
+                                    <i class="fas fa-save me-1"></i>Salvar Ordem de Coleta
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Concluir Coleta -->
+<div class="modal fade" id="concluirModal" tabindex="-1" aria-labelledby="concluirModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="@Url.Action("ConcluirColeta")">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="concluirColetaId" name="id" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="concluirModalLabel">Concluir Coleta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Confirma a conclusão da coleta para <strong id="concluirEmpresaNome"></strong>?</p>
+                    
+                    <div class="mb-3">
+                        <label for="quantidadeTotalColetada" class="form-label">Quantidade Total Coletada (kg) *</label>
+                        <input type="number" class="form-control" id="quantidadeTotalColetada" name="quantidadeTotalColetada" 
+                               min="0" step="0.1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i>Concluir Coleta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar drag and drop para reordenar coletas
+            const container = document.getElementById('coletas-container');
+            if (container) {
+                Sortable.create(container, {
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    dragClass: 'sortable-drag'
+                });
+            }
+
+            // Modal de Concluir
+            const concluirModal = document.getElementById('concluirModal');
+            if (concluirModal) {
+                concluirModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const coletaId = button.getAttribute('data-coleta-id');
+                    const empresaNome = button.getAttribute('data-empresa-nome');
+                    
+                    document.getElementById('concluirColetaId').value = coletaId;
+                    document.getElementById('concluirEmpresaNome').textContent = empresaNome;
+                });
+            }
+
+            // Salvar ordem de coleta
+            const salvarOrdemBtn = document.getElementById('salvarOrdem');
+            if (salvarOrdemBtn) {
+                salvarOrdemBtn.addEventListener('click', function() {
+                    const coletaIds = Array.from(container.children).map(el => 
+                        parseInt(el.getAttribute('data-coleta-id'))
+                    );
+                    
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '@Url.Action("DefinirOrdemColeta")';
+                    
+                    // Adicionar token antiforgery
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]');
+                    if (token) {
+                        const tokenInput = document.createElement('input');
+                        tokenInput.type = 'hidden';
+                        tokenInput.name = '__RequestVerificationToken';
+                        tokenInput.value = token.value;
+                        form.appendChild(tokenInput);
+                    }
+                    
+                    // Adicionar IDs das coletas
+                    coletaIds.forEach(id => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'coletaIds';
+                        input.value = id;
+                        form.appendChild(input);
+                    });
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                });
+            }
+        });
+    </script>
+    
+    <style>
+        .sortable-ghost {
+            opacity: 0.4;
+        }
+        
+        .sortable-chosen {
+            cursor: grabbing;
+        }
+        
+        .sortable-drag {
+            transform: rotate(5deg);
+        }
+        
+        .border-left-primary {
+            border-left: 4px solid #007bff !important;
+        }
+        
+        .border-left-success {
+            border-left: 4px solid #28a745 !important;
+        }
+    </style>
+}
+

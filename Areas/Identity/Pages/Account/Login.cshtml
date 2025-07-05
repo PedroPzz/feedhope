@@ -1,0 +1,147 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Entrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <div class="mb-3">
+                        <img src="~/images/leaf-icon.png" alt="FeedHope" class="img-fluid" style="max-height: 60px;">
+                    </div>
+                    <h3 class="font-weight-light mb-0">FeedHope</h3>
+                    <p class="mb-0">Sistema de Gestão de Alimentos</p>
+                </div>
+                <div class="card-body">
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="nome@exemplo.com" />
+                            <label asp-for="Input.Email" class="form-label">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Senha" />
+                            <label asp-for="Input.Password" class="form-label">Senha</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" asp-for="Input.RememberMe" />
+                            <label class="form-check-label" asp-for="Input.RememberMe">
+                                Lembrar de mim
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button id="login-submit" type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Entrar
+                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <p class="small">
+                                <a id="forgot-password" asp-page="./ForgotPassword">Esqueceu sua senha?</a>
+                            </p>
+                            <p class="small">
+                                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Criar nova conta</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light text-center py-3">
+                    <div class="small">
+                        <strong>Usuários de Teste:</strong>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-6">
+                            <div class="card bg-light border-0">
+                                <div class="card-body p-2">
+                                    <h6 class="card-title small mb-1">Administrador</h6>
+                                    <p class="card-text small mb-1">admin@feedhope.ufra.edu.br</p>
+                                    <p class="card-text small mb-0 text-muted">Admin@123</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light border-0">
+                                <div class="card-body p-2">
+                                    <h6 class="card-title small mb-1">UFRA</h6>
+                                    <p class="card-text small mb-1">ufra@feedhope.ufra.edu.br</p>
+                                    <p class="card-text small mb-0 text-muted">UFRA@123</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar funcionalidade para preencher automaticamente os campos de teste
+            const adminCard = document.querySelector('.card-footer .col-6:first-child .card');
+            const ufraCard = document.querySelector('.card-footer .col-6:last-child .card');
+            
+            if (adminCard) {
+                adminCard.style.cursor = 'pointer';
+                adminCard.addEventListener('click', function() {
+                    document.getElementById('Input_Email').value = 'admin@feedhope.ufra.edu.br';
+                    document.getElementById('Input_Password').value = 'Admin@123';
+                });
+            }
+            
+            if (ufraCard) {
+                ufraCard.style.cursor = 'pointer';
+                ufraCard.addEventListener('click', function() {
+                    document.getElementById('Input_Email').value = 'ufra@feedhope.ufra.edu.br';
+                    document.getElementById('Input_Password').value = 'UFRA@123';
+                });
+            }
+            
+            // Adicionar efeito hover nos cards de teste
+            const testCards = document.querySelectorAll('.card-footer .card');
+            testCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#e9ecef';
+                    this.style.transform = 'scale(1.02)';
+                    this.style.transition = 'all 0.2s ease';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+    
+    <style>
+        .card-footer .card {
+            transition: all 0.2s ease;
+        }
+        
+        .card-footer .card:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            opacity: .65;
+            transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+    </style>
+}
+

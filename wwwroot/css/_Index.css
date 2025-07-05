@@ -1,0 +1,126 @@
+/* Melhorias de acessibilidade */
+.feature-card,
+.benefit-item {
+    transition: var(--transition);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    background: white;
+    box-shadow: var(--box-shadow);
+    height: 100%;
+}
+
+.feature-card:hover,
+.feature-card:focus,
+.benefit-item:hover,
+.benefit-item:focus {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    outline: 2px solid var(--primary-green);
+    outline-offset: 2px;
+}
+
+.feature-icon {
+    transition: var(--transition);
+}
+
+.feature-card:hover .feature-icon i,
+.feature-card:focus .feature-icon i {
+    transform: scale(1.1);
+}
+
+.feature-title {
+    color: var(--dark-green);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.feature-description {
+    color: #6c757d;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.benefit-item h4 {
+    color: var(--dark-green);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+/* Animações */
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.leaf-float {
+    animation: leafFloat 3s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes leafFloat {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(5deg);
+    }
+}
+
+/* Melhorias de responsividade */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .feature-card,
+    .benefit-item {
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn-lg {
+        width: 100%;
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* Melhorias de contraste para acessibilidade */
+@media (prefers-contrast: high) {
+    .feature-card,
+    .benefit-item {
+        border: 2px solid var(--dark-green);
+    }
+    
+    .text-muted {
+        color: #495057 !important;
+    }
+}
+
+/* Suporte para modo escuro */
+@media (prefers-color-scheme: dark) {
+    .feature-card,
+    .benefit-item {
+        background: #2d3748;
+        color: white;
+    }
+    
+    .feature-title,
+    .benefit-item h4 {
+        color: var(--secondary-green);
+    }
+}
+
+

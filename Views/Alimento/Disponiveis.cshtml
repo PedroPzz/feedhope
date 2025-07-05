@@ -1,0 +1,196 @@
+@model IEnumerable<FeedHope.Models.AlimentoModel>
+
+@{
+    ViewData["Title"] = "Alimentos Disponíveis";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-check-circle me-2 text-success"></i>Alimentos Disponíveis para Coleta</h2>
+        <p class="text-muted">Lista completa de alimentos disponíveis para doação, ordenados por proximidade do vencimento</p>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Nenhum alimento disponível no momento.</strong> 
+        <a asp-action="Create" class="alert-link">Cadastre novos alimentos</a> para começar a fazer a diferença!
+    </div>
+}
+else
+{
+    <!-- Estatísticas rápidas -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <div class="stat-number text-success">@Model.Count()</div>
+                <div class="stat-label">Alimentos Disponíveis</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <div class="stat-number text-info">@Model.Sum(a => a.Quantidade).ToString("N1")</div>
+                <div class="stat-label">Quantidade Total</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <div class="stat-number text-warning">@Model.Count(a => (a.Validade - DateTime.Now).Days <= 3)</div>
+                <div class="stat-label">Próximos ao Vencimento</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <div class="stat-number text-secondary">@Model.Select(a => a.EmpresaId).Distinct().Count()</div>
+                <div class="stat-label">Empresas Doadoras</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de alimentos em cards -->
+    <div class="row" id="listaAlimentos">
+        @foreach (var alimento in Model)
+        {
+            var diasRestantes = (alimento.Validade - DateTime.Now).Days;
+            var urgenciaClass = "";
+            var urgenciaTexto = "";
+            var urgenciaIcon = "";
+            var cardClass = "";
+
+            if (diasRestantes <= 1)
+            {
+                urgenciaClass = "bg-danger";
+                urgenciaTexto = "CRÍTICO";
+                urgenciaIcon = "fas fa-exclamation-triangle";
+                cardClass = "border-danger";
+            }
+            else if (diasRestantes <= 3)
+            {
+                urgenciaClass = "bg-warning";
+                urgenciaTexto = "URGENTE";
+                urgenciaIcon = "fas fa-exclamation";
+                cardClass = "border-warning";
+            }
+            else
+            {
+                urgenciaClass = "bg-success";
+                urgenciaTexto = "NORMAL";
+                urgenciaIcon = "fas fa-check";
+                cardClass = "border-success";
+            }
+            
+            <div class="col-md-6 col-lg-4 mb-3 alimento-card" 
+                 data-tipo="@alimento.Tipo" 
+                 data-empresa="@alimento.Empresa?.Nome" 
+                 data-urgencia="@(diasRestantes <= 1 ? "critico" : diasRestantes <= 3 ? "urgente" : "normal")"
+                 data-busca="@alimento.Tipo @alimento.Descricao @alimento.Empresa?.Nome">
+                <div class="card h-100 @cardClass">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">
+                            <i class="fas fa-apple-alt me-2"></i>@alimento.Tipo
+                        </h6>
+                        <span class="badge @urgenciaClass">
+                            <i class="@urgenciaIcon me-1"></i>@urgenciaTexto
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            @if (!string.IsNullOrEmpty(alimento.Descricao))
+                            {
+                                <small class="text-muted">@alimento.Descricao</small>
+                            }
+                        </p>
+                        
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <small class="text-muted">Quantidade:</small>
+                                <br><strong>@alimento.Quantidade.ToString("N1") @alimento.UnidadeMedida</strong>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Validade:</small>
+                                <br><strong>@alimento.Validade.ToString("dd/MM/yyyy")</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <small class="text-muted">Empresa:</small>
+                            <br><span class="badge bg-secondary">@alimento.Empresa?.Nome</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <small class="text-muted">Dias restantes:</small>
+                            <br>
+                            @if (diasRestantes <= 1)
+                            {
+                                <span class="badge bg-danger">@diasRestantes dia(s)</span>
+                            }
+                            else if (diasRestantes <= 3)
+                            {
+                                <span class="badge bg-warning">@diasRestantes dias</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">@diasRestantes dias</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group w-100">
+                            <a asp-action="Details" asp-route-id="@alimento.Id" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-eye me-1"></i>Detalhes
+                            </a>
+                            <a asp-controller="Coleta" asp-action="Create" asp-route-alimentoId="@alimento.Id" class="btn btn-success btn-sm">
+                                <i class="fas fa-truck me-1"></i>Coletar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Ações em lote -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-tasks me-2"></i>Ações Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <a asp-controller="Coleta" asp-action="Create" class="btn btn-success w-100">
+                                <i class="fas fa-plus me-1"></i>Nova Coleta Geral
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a asp-action="ProximosVencimento" class="btn btn-warning w-100">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Ver Próximos ao Vencimento
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a asp-action="Create" class="btn btn-primary w-100">
+                                <i class="fas fa-plus me-1"></i>Cadastrar Novo Alimento
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Botões de navegação -->
+<div class="row mt-4">
+    <div class="col-12">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Voltar para Todos os Alimentos
+        </a>
+        <a asp-action="ProximosVencimento" class="btn btn-warning">
+            <i class="fas fa-exclamation-triangle me-1"></i>Próximos ao Vencimento
+        </a>
+    </div>
+</div>
+

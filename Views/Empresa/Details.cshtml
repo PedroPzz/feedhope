@@ -1,0 +1,24 @@
+﻿@model FeedHope.Models.EmpresaModel
+
+@{
+    ViewData["Title"] = "Detalhes da Empresa";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<dl class="row">
+    <dt class="col-sm-2">Nome</dt>
+    <dd class="col-sm-10">@Model.Nome</dd>
+
+    <dt class="col-sm-2">Tipo</dt>
+    <dd class="col-sm-10">@Model.Tipo</dd>
+
+    <dt class="col-sm-2">Endereço</dt>
+    <dd class="col-sm-10">@Model.Endereco</dd>
+
+    <dt class="col-sm-2">Contato</dt>
+    <dd class="col-sm-10">@Model.Contato</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-secondary">Voltar</a>

@@ -1,0 +1,227 @@
+@model IEnumerable<FeedHope.Models.ColetaModel>
+
+@{
+    ViewData["Title"] = "Coletas Pendentes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-clock text-warning me-2"></i>
+                        Coletas Pendentes de Aprovação
+                    </h3>
+                    <span class="badge bg-warning text-dark fs-6">@Model.Count() pendente(s)</span>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                            <h4 class="mt-3 text-muted">Nenhuma coleta pendente</h4>
+                            <p class="text-muted">Todas as solicitações foram processadas.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            @foreach (var coleta in Model)
+                            {
+                                <div class="col-lg-6 col-xl-4 mb-4">
+                                    <div class="card border-left-warning shadow h-100">
+                                        <div class="card-header bg-light">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0 font-weight-bold">
+                                                    @coleta.Empresa?.Nome
+                                                </h6>
+                                                <span class="badge badge-@(coleta.Prioridade == "Urgente" ? "danger" : coleta.Prioridade == "Alta" ? "warning" : "info")">
+                                                    @coleta.Prioridade
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <small class="text-muted">Endereço:</small>
+                                                <p class="mb-1">@coleta.Endereco</p>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <small class="text-muted">Data da Solicitação:</small>
+                                                <p class="mb-1">@coleta.DataSolicitacao.ToString("dd/MM/yyyy HH:mm")</p>
+                                            </div>
+
+                                            @if (coleta.AlimentosColeta?.Any() == true)
+                                            {
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Alimentos:</small>
+                                                    <ul class="list-unstyled mb-0">
+                                                        @foreach (var alimentoColeta in coleta.AlimentosColeta.Take(3))
+                                                        {
+                                                            <li class="small">
+                                                                • @alimentoColeta.Alimento?.Descricao (@alimentoColeta.QuantidadeColetada @alimentoColeta.Alimento?.UnidadeMedida)
+                                                            </li>
+                                                        }
+                                                        @if (coleta.AlimentosColeta.Count() > 3)
+                                                        {
+                                                            <li class="small text-muted">... e mais @(coleta.AlimentosColeta.Count() - 3) item(s)</li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(coleta.Observacoes))
+                                            {
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Observações:</small>
+                                                    <p class="small mb-0">@coleta.Observacoes</p>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="card-footer bg-white">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <button type="button" class="btn btn-success btn-sm w-100" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#aprovarModal" 
+                                                            data-coleta-id="@coleta.Id"
+                                                            data-empresa-nome="@coleta.Empresa?.Nome">
+                                                        <i class="fas fa-check me-1"></i>Aprovar
+                                                    </button>
+                                                </div>
+                                                <div class="col-6">
+                                                    <button type="button" class="btn btn-danger btn-sm w-100" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#recusarModal" 
+                                                            data-coleta-id="@coleta.Id"
+                                                            data-empresa-nome="@coleta.Empresa?.Nome">
+                                                        <i class="fas fa-times me-1"></i>Recusar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col-12">
+                                                    <a href="@Url.Action("Details", new { id = coleta.Id })" 
+                                                       class="btn btn-outline-primary btn-sm w-100">
+                                                        <i class="fas fa-eye me-1"></i>Ver Detalhes
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Aprovar Coleta -->
+<div class="modal fade" id="aprovarModal" tabindex="-1" aria-labelledby="aprovarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="@Url.Action("Aprovar")">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="aprovarColetaId" name="id" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aprovarModalLabel">Aprovar Coleta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Confirma a aprovação da coleta para <strong id="aprovarEmpresaNome"></strong>?</p>
+                    
+                    <div class="mb-3">
+                        <label for="responsavelUFRA" class="form-label">Responsável UFRA *</label>
+                        <input type="text" class="form-control" id="responsavelUFRA" name="responsavelUFRA" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="dataColeta" class="form-label">Data da Coleta *</label>
+                        <input type="datetime-local" class="form-control" id="dataColeta" name="dataColeta" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3" placeholder="Observações adicionais..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i>Aprovar Coleta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Recusar Coleta -->
+<div class="modal fade" id="recusarModal" tabindex="-1" aria-labelledby="recusarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="@Url.Action("Recusar")">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="recusarColetaId" name="id" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="recusarModalLabel">Recusar Coleta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Confirma a recusa da coleta para <strong id="recusarEmpresaNome"></strong>?</p>
+                    
+                    <div class="mb-3">
+                        <label for="motivoRecusa" class="form-label">Motivo da Recusa *</label>
+                        <textarea class="form-control" id="motivoRecusa" name="motivoRecusa" rows="4" required placeholder="Descreva o motivo da recusa..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-times me-1"></i>Recusar Coleta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Script para configurar os modais
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal de Aprovar
+            const aprovarModal = document.getElementById('aprovarModal');
+            aprovarModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const coletaId = button.getAttribute('data-coleta-id');
+                const empresaNome = button.getAttribute('data-empresa-nome');
+                
+                document.getElementById('aprovarColetaId').value = coletaId;
+                document.getElementById('aprovarEmpresaNome').textContent = empresaNome;
+                
+                // Definir data mínima como hoje
+                const hoje = new Date();
+                hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset());
+                document.getElementById('dataColeta').min = hoje.toISOString().slice(0, 16);
+            });
+            
+            // Modal de Recusar
+            const recusarModal = document.getElementById('recusarModal');
+            recusarModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const coletaId = button.getAttribute('data-coleta-id');
+                const empresaNome = button.getAttribute('data-empresa-nome');
+                
+                document.getElementById('recusarColetaId').value = coletaId;
+                document.getElementById('recusarEmpresaNome').textContent = empresaNome;
+            });
+        });
+    </script>
+}
+

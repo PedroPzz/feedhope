@@ -1,0 +1,41 @@
+﻿@model IEnumerable<FeedHope.Models.ColetaModel>
+
+@{
+    ViewData["Title"] = "Coletas";
+}
+
+<h2 class="mb-4">Coletas</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">Nova Coleta</a>
+
+<table class="table table-hover table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Data</th>
+            <th>Empresa</th>
+            <th style="width: 180px;">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var coleta in Model)
+        {
+            <tr>
+                <td>@coleta.DataColeta.ToShortDateString()</td>
+                <td>@coleta.Empresa?.Nome</td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Ações">
+                        <a asp-action="Details" asp-route-id="@coleta.Id" class="btn btn-info btn-sm" title="Ver detalhes">
+                            <i class="fas fa-eye"></i> Detalhes
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@coleta.Id" class="btn btn-primary btn-sm" title="Editar coleta">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@coleta.Id" class="btn btn-danger btn-sm" title="Excluir coleta">
+                            <i class="fas fa-trash"></i> Excluir
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

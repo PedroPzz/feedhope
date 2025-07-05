@@ -1,0 +1,227 @@
+@{
+    ViewData["Title"] = "Formas de Uso - Relatórios";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-recycle me-2 text-warning"></i>Formas de Uso dos Alimentos</h2>
+        <p class="text-muted">Análise de como os alimentos coletados são destinados e utilizados</p>
+    </div>
+</div>
+
+<!-- Estatísticas gerais -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@((IEnumerable<dynamic>)ViewBag.DestinacoesPorTipo).Count()</div>
+            <div class="stat-label">Tipos de Destinação</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@((IEnumerable<dynamic>)ViewBag.DestinacoesPorTipo).Sum(d => d.NumeroDestinacoes)</div>
+            <div class="stat-label">Total Destinações</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@((IEnumerable<dynamic>)ViewBag.DestinacoesPorTipo).Sum(d => d.Quantidade).ToString("N1")</div>
+            <div class="stat-label">Quantidade Total (kg)</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">@ViewBag.TotalBeneficiarios</div>
+            <div class="stat-label">Beneficiários Atendidos</div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico de destinações por tipo -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-pie me-2"></i>Distribuição por Tipo de Destinação</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="graficoDestinacoes" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-trophy me-2"></i>Ranking por Quantidade</h5>
+            </div>
+            <div class="card-body">
+                @foreach (var item in ((IEnumerable<dynamic>)ViewBag.DestinacoesPorTipo).Take(5))
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">@item.TipoDestinacao</span>
+                        <span class="badge bg-primary">@item.Quantidade.ToString("N1") kg</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 8px;">
+                        @{
+                            var maxQuantidade = ((IEnumerable<dynamic>)ViewBag.DestinacoesPorTipo).Max(d => d.Quantidade);
+                            var percentual = maxQuantidade > 0 ? (double)item.Quantidade / maxQuantidade * 100 : 0;
+                        }
+                        <div class="progress-bar" role="progressbar" style="width: @(percentual)%"></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela detalhada -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-table me-2"></i>Detalhamento por Tipo de Destinação</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tipo de Destinação</th>
+                                <th>Quantidade Total</th>
+                                <th>Nº Destinações</th>
+                                <th>Beneficiários</th>
+                                <th>Média por Destinação</th>
+                                <th>Beneficiários/Destinação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.DestinacoesPorTipo)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@item.TipoDestinacao</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">@item.Quantidade.ToString("N1") kg</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@item.NumeroDestinacoes</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning">@item.BeneficiariosAtendidos</span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var mediaDestinacao = item.NumeroDestinacoes > 0 ? (double)item.Quantidade / item.NumeroDestinacoes : 0;
+                                        }
+                                        @mediaDestinacao.ToString("N1") kg
+                                    </td>
+                                    <td>
+                                        @{
+                                            var mediaBeneficiarios = item.NumeroDestinacoes > 0 ? (double)item.BeneficiariosAtendidos / item.NumeroDestinacoes : 0;
+                                        }
+                                        @mediaBeneficiarios.ToString("N0")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Destinações recentes -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-clock me-2"></i>Destinações Recentes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Quantidade</th>
+                                <th>Local</th>
+                                <th>Beneficiários</th>
+                                <th>Empresa Origem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var destinacao in ViewBag.DestinacoesRecentes)
+                            {
+                                <tr>
+                                    <td>@destinacao.DataConclusao?.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <span class="badge bg-primary">@destinacao.TipoDestinacao</span>
+                                    </td>
+                                    <td>@destinacao.Descricao</td>
+                                    <td>@destinacao.Quantidade.ToString("N1") @destinacao.UnidadeMedida</td>
+                                    <td>@destinacao.LocalDestinacao</td>
+                                    <td>
+                                        @if (destinacao.BeneficiariosEstimados.HasValue)
+                                        {
+                                            <span class="badge bg-success">@destinacao.BeneficiariosEstimados</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>@destinacao.Coleta?.Empresa?.Nome</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Gráfico de destinações por tipo
+    const ctx = document.getElementById('graficoDestinacoes').getContext('2d');
+    const destinacoes = @Html.Raw(Json.Serialize(ViewBag.DestinacoesPorTipo));
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: destinacoes.map(d => d.tipoDestinacao),
+            datasets: [{
+                data: destinacoes.map(d => d.quantidade),
+                backgroundColor: [
+                    '#38a169', '#4299e1', '#ed8936', '#e53e3e', '#805ad5',
+                    '#38b2ac', '#d69e2e', '#f56565', '#9f7aea', '#4fd1c7'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.parsed.toFixed(1) + ' kg';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+}
+
